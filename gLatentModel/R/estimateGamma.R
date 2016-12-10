@@ -36,7 +36,7 @@ estimate_gamma <- function(mat){
 }
 
 .neighbor_gamma_estimation <- function(mat, a.vec){
-  stopifnot(is.numeric(mat), is.matrix(mat), all(a.vec) <= ncol(mat))
+  stopifnot(is.numeric(mat), is.matrix(mat), all(a.vec <= ncol(mat)))
 
   p <- ncol(mat)
   idx <- c(1:p)[-a.vec]
