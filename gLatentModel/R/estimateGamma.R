@@ -5,14 +5,12 @@ estimate_gamma <- function(mat){
   mat <- scale(mat, center = T, scale = F)
   p <- ncol(mat); n <- nrow(mat)
 
-  res <- sapply(1:p, function(x){
+  sapply(1:p, function(x){
     ne1 <- .neighbor_gamma_estimation(mat, x)
     ne2 <- .neighbor_gamma_estimation(mat, c(x, ne1))
 
     t(mat[,x] - mat[,ne1])%*%(mat[,x] - mat[,ne2])/n
   })
-
-  diag(res)
 }
 
 .l2norm <- function(vec){
