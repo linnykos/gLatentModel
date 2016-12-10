@@ -1,0 +1,14 @@
+language: r
+
+before_install:
+ - cd gLatentModel
+
+cache: packages
+
+r_binary_packages:
+    - glmnet
+
+after_success:
+  - Rscript -e 'library(covr); codecov()'
+
+warnings_are_errors: true
