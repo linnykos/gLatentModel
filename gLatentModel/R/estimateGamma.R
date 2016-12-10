@@ -29,7 +29,7 @@ estimate_gamma <- function(mat){
 
   res <- apply(idx_comb, 2, function(x){
     vec <- mat[,x[1]] - mat[,x[2]]
-    t(vec_diff)%*%(vec/.l2norm(vec))
+    if(all(vec  == 0)) 0 else t(vec_diff)%*%(vec/.l2norm(vec))
   })
 
   max(res, na.rm = T)
