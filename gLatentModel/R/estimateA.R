@@ -59,15 +59,16 @@ pure_nodes <- function(c_mat, k){
 #     as.numeric(u_mat[,idx])
 #   }
 # }
-#
-# .KKT_grid_solver <- function(gamma, vec, mat, inv_mat){
-#   K <- ncol(mat)
-#
-#   res <- ((2*t(vec)%*%mat - gamma)%*%inv_mat)/2
-#   idx <- which(res > 0)
-#
-#   tmp <- (vec%*%mat[,idx] - gamma/2) %*% solve(t(mat[,idx])%*%mat[,idx])
-#   res <- rep(0, K)
-#   res[idx] = tmp
-#   as.numeric(res)
-# }
+
+.KKT_grid_solver <- function(gamma, vec, mat, inv_mat){
+  K <- ncol(mat)
+
+  res <- ((2*t(vec)%*%mat - gamma)%*%inv_mat)/2
+  idx <- which(res > 0)
+  if(length(idx) == 0) return(rep(0, K))
+
+  tmp <- (t(vec)%*%mat[,idx] - gamma/2) %*% solve(t(mat[,idx])%*%mat[,idx])
+  res <- rep(0, K)
+  res[idx] = tmp
+  as.numeric(res)
+}

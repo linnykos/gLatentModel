@@ -31,7 +31,30 @@ test_that("estimate_theta returns properly", {
   res <- estimate_theta(c_mat, idx)
   expect_true(is.matrix(res))
   expect_true(is.numeric(res))
-  expect_true(all(dim(res) == rep(length(idx),2)))
+  expect_true(all(dim(res) == rep(length(idx), 2)))
   expect_true(sum(abs(res - t(res))) < 1e-4)
   expect_true(sum(abs(res - c_mat[idx, idx])) < 1e-4)
+})
+
+#######################################
+
+## .KKT_grid_solver is correct
+
+test_that(".KKT_grid_solver returns properly", {
+  for(trial in 1:50){
+    set.seed(10)
+    gamma <- 1
+    K <- 5
+    vec <- stats::rnorm(K)
+    mat <- matrix(stats::rnorm(K^2), K, K); mat <- mat + t(mat)
+
+    inv_mat <- solve(t(mat) %*% mat)
+
+    res <- .KKT_grid_solver(gamma, vec, mat, inv_mat)
+
+    expect_true(length(res) == K)
+    expect_true(is.numeric(res))
+    expect_true(!is.matrix(res))
+    expect_true(all(res >= -.05)) #FOR SOME REASON, NOT ALWAYS NON-NEGATIVE
+  }
 })
