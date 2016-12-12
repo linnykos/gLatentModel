@@ -28,47 +28,43 @@ pure_nodes <- function(c_mat, k){
   order(abs(diag(c_mat)), decreasing = T)[1:k]
 }
 
-.optim_solver_constrainLS <- function(vec, mat, depth = 1, max_depth = 3,
-  grid_length = 100, multiplier_range = 10, shift_idx = 1, start = -10,
-  end = 10, tol = 1e-4, warnings = 0){
+.optim_solver_constrainLS <- function(vec, mat, z_vec = rep(1/ncol(mat), ncol(mat)),
+  lambda_vec = rep(0, ncol(mat)), rho = 1, tol = 1e-4, max_iter = 100){
 
-  if(warnings > max_depth) stop("Error in solving for A. Cannot calibrate.")
+  iter <- 1
+  beta_vec_prev <- rep(0, ncol(mat))
 
-  gamma_grid <- seq(start, end, length.out = grid_length)
-  inv_mat <- solve(t(mat)%*%mat)
+  beta_mat <- matrix(0, ncol(mat), max_iter)
+  z_mat <- matrix(0, ncol(mat), max_iter)
+  lambda_mat <- matrix(0, ncol(mat), max_iter)
 
-  u_mat <- sapply(gamma_grid, .KKT_grid_solver,
-    vec = vec, mat = mat, inv_mat = inv_mat)
-  u_sum <- apply(u_mat, 2, sum)
-  idx <- which.min(abs(u_sum - 1))
+  while(iter < max_iter){
+    beta_vec_new <- .ADMM_solver_primal(vec, mat, lambda_vec, z_vec, rho)
+    z_vec <- .ADMM_solver_dual(beta_vec_new, rho, lambda_vec)
+    lambda_vec <- lambda_vec + rho*(beta_vec_new - z_vec)
 
-  if(max(u_sum) < 1-tol | min(u_sum) > 1+tol){
-    #cannot find right u_sum
-    dif <- multiplier_range*abs(end - start)
-    .optim_solver_constrainLS(vec, mat, start = start-dif,
-      end = end+dif, warnings = warnings+1)
-  } else if(depth < max_depth){
-    #go to next depth
-    dif <- gamma_grid[2] - gamma_grid[1]
-    next_start <- gamma_grid[max(1, idx - shift_idx)] - dif
-    next_end <- gamma_grid[min(grid_length, idx + shift_idx)] + dif
-    .optim_solver_constrainLS(vec, mat, start = next_start,
-      end = next_end, depth = depth+1)
-  } else{
-    #return
-    as.numeric(u_mat[,idx])
+    if(.l2norm(beta_vec_new - beta_vec_prev) <= tol) break()
+    beta_vec_old <- beta_vec_new
+    iter <- iter + 1
+
+    beta_mat[,iter] <- beta_vec_new
+    z_mat[,iter] <- z_vec
+    lambda_mat[,iter] <- lambda_vec
   }
+
+  #list(beta = beta_mat, z = z_mat, lambda = lambda_mat)
+  beta_vec_new
 }
 
-.KKT_grid_solver <- function(gamma, vec, mat, inv_mat){
+.ADMM_solver_primal <- function(vec, mat, lambda_vec, z_vec, rho){
   K <- ncol(mat)
 
-  res <- ((2*t(vec)%*%mat - gamma)%*%inv_mat)/2
-  idx <- which(res > 0)
-  if(length(idx) == 0) return(rep(0, K))
+  res <- solve(-2*t(mat)%*%mat + diag(K))%*%(-lambda_vec + rho * z_vec)
+  as.numeric(res/sum(res))
+}
 
-  tmp <- (t(vec)%*%mat[,idx] - gamma/2) %*% solve(t(mat[,idx])%*%mat[,idx])
-  res <- rep(0, K)
-  res[idx] = tmp
+.ADMM_solver_dual <- function(beta_vec, rho, lambda_vec){
+  res <- 2/rho * (lambda_vec + rho*beta_vec/2)
+  res[res < 0] <- 0
   as.numeric(res)
 }
