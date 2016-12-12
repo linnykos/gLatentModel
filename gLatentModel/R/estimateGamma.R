@@ -1,15 +1,15 @@
 ##formula from Eq (19) of https://arxiv.org/pdf/1606.05100v1.pdf
 
-estimate_gamma <- function(mat){
-  stopifnot(is.matrix(mat), is.numeric(mat))
-  mat <- scale(mat, center = T, scale = F)
-  p <- ncol(mat); n <- nrow(mat)
+estimate_gamma <- function(dat){
+  stopifnot(is.matrix(dat), is.numeric(dat))
+  dat <- scale(dat, center = T, scale = F)
+  p <- ncol(dat); n <- nrow(dat)
 
   sapply(1:p, function(x){
-    ne1 <- .neighbor_gamma_estimation(mat, x)
-    ne2 <- .neighbor_gamma_estimation(mat, c(x, ne1))
+    ne1 <- .neighbor_gamma_estimation(dat, x)
+    ne2 <- .neighbor_gamma_estimation(dat, c(x, ne1))
 
-    t(mat[,x] - mat[,ne1])%*%(mat[,x] - mat[,ne2])/n
+    t(dat[,x] - dat[,ne1])%*%(dat[,x] - dat[,ne2])/n
   })
 }
 
@@ -18,27 +18,27 @@ estimate_gamma <- function(mat){
   sqrt(sum(vec^2))
 }
 
-.v_innerproduct <- function(mat, a, b){
-  stopifnot(is.numeric(mat), is.matrix(mat), all(c(a,b) <= ncol(mat)))
+.v_innerproduct <- function(dat, a, b){
+  stopifnot(is.numeric(dat), is.matrix(dat), all(c(a,b) <= ncol(dat)))
 
-  p <- ncol(mat)
+  p <- ncol(dat)
   idx <- c(1:p)[-c(a,b)]; idx_comb <- utils::combn(idx, 2)
-  vec_diff <- mat[,a] - mat[,b]
+  vec_diff <- dat[,a] - dat[,b]
 
   res <- apply(idx_comb, 2, function(x){
-    vec <- mat[,x[1]] - mat[,x[2]]
+    vec <- dat[,x[1]] - dat[,x[2]]
     if(all(vec  == 0)) 0 else t(vec_diff)%*%(vec/.l2norm(vec))
   })
 
   max(res, na.rm = T)
 }
 
-.neighbor_gamma_estimation <- function(mat, a.vec){
-  stopifnot(is.numeric(mat), is.matrix(mat), all(a.vec <= ncol(mat)))
+.neighbor_gamma_estimation <- function(dat, a.vec){
+  stopifnot(is.numeric(dat), is.matrix(dat), all(a.vec <= ncol(dat)))
 
-  p <- ncol(mat)
+  p <- ncol(dat)
   idx <- c(1:p)[-a.vec]
-  res <- sapply(idx, .v_innerproduct, mat = mat, a = a.vec[1])
+  res <- sapply(idx, .v_innerproduct, dat = dat, a = a.vec[1])
 
   idx[which.min(res)]
 }
