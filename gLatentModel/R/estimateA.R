@@ -16,16 +16,13 @@
 #   rbind(diag(K), u_mat)
 # }
 #
-# estimate_theta <- function(c_mat, pure_idx){
-#   stopifnot(is.matrix(c_mat), is.numeric(c_mat), all(c_mat == t(c_mat)))
-#   stopifnot(all(pure_idx <= ncol(c_mat)), all(pure_idx >= 1), all(pure_idx %%1 == 0))
-#   stopifnot(all(sort(unique(pure_idx)) == sort(pure_idx)))
-#
-#   d <- ncol(c_mat)
-#
-#   idx_rest <- c(1:d)[-pure_idx]
-#   c_mat[pure_idx, idx]
-# }
+estimate_theta <- function(c_mat, pure_idx){
+  stopifnot(is.matrix(c_mat), is.numeric(c_mat), all(c_mat == t(c_mat)))
+  stopifnot(all(pure_idx <= ncol(c_mat)), all(pure_idx >= 1), all(pure_idx %%1 == 0))
+  stopifnot(all(sort(unique(pure_idx)) == sort(pure_idx)))
+
+  c_mat[pure_idx, pure_idx]
+}
 
 pure_nodes <- function(c_mat, k){
   order(abs(diag(c_mat)), decreasing = T)[1:k]
