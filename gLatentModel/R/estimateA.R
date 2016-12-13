@@ -24,10 +24,6 @@ estimate_theta <- function(c_mat, pure_idx){
   c_mat[pure_idx, pure_idx]
 }
 
-pure_nodes <- function(c_mat, k){
-  sort(order(abs(diag(c_mat)), decreasing = T)[1:k])
-}
-
 group_cluster <- function(a_mat){
   K <- ncol(a_mat)
 

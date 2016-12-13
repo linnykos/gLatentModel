@@ -5,7 +5,7 @@ context("Test gLatentModel")
 test_that("gLatentModel returns properly", {
   set.seed(10)
   K <- 2
-  latent_dat <- MASS::mvrnorm(1000, rep(0, K), diag(K))
+  latent_dat <- MASS::mvrnorm(1000, rep(0, K), matrix(c(2,-1,-1,2),2,2))
   a_mat <- rbind(diag(K), diag(K), diag(K), diag(K), diag(K), diag(K))
   dat <- latent_dat%*%t(a_mat) + 0.01*rnorm(50)
 
