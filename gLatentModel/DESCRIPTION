@@ -10,7 +10,8 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     MASS,
-    plyr
+    plyr,
+    huge
 Suggests:
     testthat
 RoxygenNote: 5.0.1
