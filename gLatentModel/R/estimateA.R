@@ -66,17 +66,22 @@ pure_nodes <- function(c_mat, k){
   as.numeric(res)
 }
 
-.ADMM_solver_dual <- function(y_vec){
+.ADMM_solver_dual <- function(y_vec, tol = 1e-4){
   K <- length(y_vec)
   y_sort <- sort(y_vec, decreasing = T)
 
-  cusum <- cumsum(y_sort)
-  if(all(cusum < 1)){
-    dif <- (1 - sum(y_vec))/K
-    return(y_vec + dif)
+  res_dif <- sapply(1:K, function(x){
+    (sum(y_sort[1:x]) - 1)/x
+  })
+
+  res_sum <- sapply(res_dif, function(x){
+     sum(sapply(y_vec - x, function(y){max(0, y)}))
+  })
+
+  if(all(abs(res_sum - 1) > tol)){
+    stop("Error in ADMM Dual to solve A")
   } else {
-    idx <- which(cusum >= 1)[1]
-    dif <- (sum(y_sort[1:idx]) - 1)/idx
-    return(sapply(y_vec - dif, function(x){max(0, x)}))
+    idx <- which.min(abs(res_sum - 1))
+    sapply(y_vec - res_dif[idx], function(y){max(0, y)})
   }
 }
