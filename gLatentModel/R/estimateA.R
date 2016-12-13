@@ -37,7 +37,13 @@ group_cluster <- function(a_mat){
 partition_cluster <- function(a_mat){
   K <- ncol(a_mat)
 
-  a_mat <- t(apply(a_mat, 1, function(x){idx <- rep(0, K); idx[which.max(x)] <- 1; idx}))
+  a_mat <- t(apply(a_mat, 1, function(x){
+    idx <- rep(0, K)
+    val <- max(x); loc <- which(abs(x - val) < 1e-4)
+    if(length(loc) > 1) loc <- loc[sample(1:length(loc), 1)]
+    idx[loc] <- 1
+    idx
+  }))
 
   plyr::alply(a_mat, 2, function(x){which(x != 0)})
 }

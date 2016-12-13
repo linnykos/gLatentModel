@@ -18,11 +18,12 @@ estimate_gamma <- function(dat){
   sqrt(sum(vec^2))
 }
 
-.v_innerproduct <- function(dat, a, b){
+.v_innerproduct <- function(dat, a, b, sample = 10){
   stopifnot(is.numeric(dat), is.matrix(dat), all(c(a,b) <= ncol(dat)))
 
   p <- ncol(dat)
   idx <- c(1:p)[-c(a,b)]; idx_comb <- utils::combn(idx, 2)
+  if(ncol(idx_comb) > 10) idx_comb <- idx_comb[,sample(1:ncol(idx_comb))[1:sample]]
   vec_diff <- dat[,a] - dat[,b]
 
   res <- apply(idx_comb, 2, function(x){

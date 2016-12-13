@@ -1,8 +1,12 @@
-reestimate_theta <- function(cov_mat, gamma_mat, a_mat){
+reestimate_theta <- function(cov_mat, gamma_mat, partition_list){
   stopifnot(ncol(gamma_mat) == nrow(gamma_mat))
-  stopifnot(nrow(a_mat) == nrow(cov_mat), nrow(a_mat) == nrow(gamma_mat))
-  stopifnot(all(as.numeric(a_mat) %in% c(0,1)))
+  stopifnot(nrow(cov_mat) == nrow(gamma_mat))
 
-  a_inv <- solve(t(a_mat) %*% a_mat)
-  a_inv %*% t(a_mat) %*% (cov_mat - gamma_mat) %*% a_mat %*% a_inv
+  a_ind <- matrix(0, nrow(cov_mat), length(partition_list))
+  for(i in 1:length(partition_list)){
+    a_ind[partition_list[[i]],i] <- 1
+  }
+
+  a_inv <- solve(t(a_ind) %*% a_ind)
+  a_inv %*% t(a_ind) %*% (cov_mat - gamma_mat) %*% a_ind %*% a_inv
 }
