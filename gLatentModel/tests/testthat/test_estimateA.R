@@ -62,7 +62,7 @@ test_that(".optim_solver_constrainLS gets an obvious answer correct", {
 
   res <- .optim_solver_constrainLS(vec, mat)
 
-  expect_true(sum((vec - mat %*% res)^2) <= sum((vec - mat %*% c(1,rep(0,4)))^2))
+  expect_true(sum((vec - mat %*% res)^2) - 1e-4 <= sum((vec - mat %*% c(1,rep(0,4)))^2))
 })
 
 test_that(".optim_solver_constrainLS enforces primal feasibility",{
@@ -86,13 +86,13 @@ test_that(".optim_solver_contrainLS gives the same value of gamma", {
     vec <- stats::rnorm(K)
     mat <- matrix(stats::rnorm(K^2), K, K); mat <- mat + t(mat)
 
-    res <- .optim_solver_constrainLS(vec, mat)
+    res <- .optim_solver_constrainLS(vec, mat, rho = 10)
 
     zz = -2*(vec-res%*%mat)%*%mat
     idx = which(res != 0)
     gamma = mean(-zz[idx])
 
-    expect_true(all(abs(-zz[idx] - gamma) <= 1e-4))
+    expect_true(all(abs(-zz[idx] - gamma) <= 1e-2))
   }
 })
 
@@ -103,7 +103,7 @@ test_that(".optim_solver_constrainLS enforces dual feasibility", {
     vec <- stats::rnorm(K)
     mat <- matrix(stats::rnorm(K^2), K, K); mat <- mat + t(mat)
 
-    res <- .optim_solver_constrainLS(vec, mat)
+    res <- .optim_solver_constrainLS(vec, mat, rho = 10)
 
     zz = -2*t(mat)%*%(vec-mat%*%res)
     idx = which(res != 0)
