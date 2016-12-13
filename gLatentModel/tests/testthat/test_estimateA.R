@@ -133,3 +133,21 @@ test_that(".optim_solver_constrainLS enforces complimentary slackness", {
     expect_true(all(lambda*res >= -1e-2))
   }
 })
+
+####################################################
+
+## estimate_a works properly
+
+test_that("estimate_a returns properly", {
+  set.seed(10)
+  theta_mat <- matrix(rnorm(25), 5, 5); theta_mat <- theta_mat + t(theta_mat)
+  c_mat <- matrix(rnorm(100), 10, 10); c_mat <- c_mat + t(c_mat)
+  pure_idx <- c(1,3,5,7,10)
+
+  res <- estimate_a(theta_mat, c_mat, pure_idx)
+
+  expect_true(is.matrix(res))
+  expect_true(is.numeric(res))
+  expect_true(all(dim(res) == c(10, 5)))
+  expect_true(all(res[1:5, 1:5] == diag(5)))
+})
