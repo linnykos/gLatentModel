@@ -6,7 +6,8 @@ before_install:
 cache: packages
 
 r_binary_packages:
-    - glmnet
+    - MASS
+    - plyr
 
 after_success:
   - Rscript -e 'library(covr); codecov()'

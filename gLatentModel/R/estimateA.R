@@ -34,6 +34,14 @@ group_cluster <- function(a_mat){
   as.list(sapply(1:K, function(x){which(a_mat[,x] != 0)}))
 }
 
+partition_cluster <- function(a_mat){
+  K <- ncol(a_mat)
+
+  a_mat <- t(apply(a_mat, 1, function(x){idx <- rep(0, K); idx[which.max(x)] <- 1; idx}))
+
+  plyr::alply(a_mat, 2, function(x){which(x != 0)})
+}
+
 # using slide 27 from https://web.stanford.edu/~boyd/papers/pdf/admm_slides.pdf
 # thanks!
 .optim_solver_constrainLS <- function(vec, mat, z_vec = rep(1/ncol(mat), ncol(mat)),
