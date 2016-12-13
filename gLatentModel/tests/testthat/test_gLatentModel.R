@@ -7,7 +7,8 @@ test_that("gLatentModel returns properly", {
   K <- 2
   latent_dat <- MASS::mvrnorm(1000, rep(0, K), matrix(c(2,-1,-1,2),2,2))
   a_mat <- rbind(diag(K), diag(K), diag(K), diag(K), diag(K), diag(K))
-  dat <- latent_dat%*%t(a_mat) + 0.01*rnorm(50)
+  dat <- latent_dat%*%t(a_mat)
+  dat <- dat + 3*rnorm(prod(dim(dat)))
 
   res <- gLatentModel(dat, K)
 
