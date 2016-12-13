@@ -24,7 +24,12 @@ gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA){
 
   theta_mat <- reestimate_theta(cov_mat, diag(gamma_vec), partition_list)
 
+  cluster <- rep(0, d)
+  for(i in 1:K){
+    cluster[partition_list[[i]]] <- i
+  }
+
   structure(list(theta = theta_mat, a = a_mat,
-    partition_list = partition_list, gamma = gamma_vec),
+    partition_list = partition_list, cluster = cluster, gamma = gamma_vec),
     class = "gLatentModel")
 }
