@@ -25,7 +25,13 @@ estimate_theta <- function(c_mat, pure_idx){
 }
 
 pure_nodes <- function(c_mat, k){
-  order(abs(diag(c_mat)), decreasing = T)[1:k]
+  sort(order(abs(diag(c_mat)), decreasing = T)[1:k])
+}
+
+group_cluster <- function(a_mat){
+  K <- ncol(a_mat)
+
+  as.list(sapply(1:K, function(x){which(a_mat[,x] != 0)}))
 }
 
 # using slide 27 from https://web.stanford.edu/~boyd/papers/pdf/admm_slides.pdf

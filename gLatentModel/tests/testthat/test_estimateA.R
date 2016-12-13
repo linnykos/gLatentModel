@@ -151,3 +151,26 @@ test_that("estimate_a returns properly", {
   expect_true(all(dim(res) == c(10, 5)))
   expect_true(all(res[1:5, 1:5] == diag(5)))
 })
+
+###################################################
+
+## group_cluster works properly
+
+test_that("group_cluster returns properly", {
+  set.seed(10)
+  a_mat <- matrix(0, 20, 10)
+  a_mat[1:10, 1:10] <- diag(10)
+  for(i in 1:50){
+    i <- sample(11:20, 1); j <- sample(1:10, 1)
+    a_mat[i,j] <- 1
+  }
+  a_mat <- t(apply(a_mat, 1, function(x){
+    if(all(x == 0)) return(rep(1/10, 10)) else return(x/sum(x))}))
+
+  res <- group_cluster(a_mat)
+
+  expect_true(is.list(res))
+  expect_true(length(res) == 10)
+  expect_true(all(sapply(res, length)) >= 1)
+  expect_true(all(sapply(res, function(x){all(x %% 1 == 0)})))
+})
