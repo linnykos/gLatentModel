@@ -30,7 +30,7 @@ naive_clustering_sbm <- function(dat, K, threshold_quantile = 0.8){
   K <- max(idx)
 
   sapply(1:K, function(x){
-    apply(dat[,which(idx == x)], 1, mean)
+    apply(dat[,which(idx == x),drop = F], 1, mean)
   })
 }
 
