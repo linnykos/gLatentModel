@@ -12,4 +12,6 @@ gLatentModel <- function(dat, K){
   theta_mat <- estimate_theta(c_mat, pure_idx)
   a_mat <- estimate_a(theta_mat, c_mat, pure_idx)
   group_list <- group_cluster(a_mat)
+
+  gamma_mat <- reestimate_gamma(dat, group_list)
 }
