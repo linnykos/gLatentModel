@@ -2,7 +2,7 @@ naive_clustering_hclust <- function(dat, K){
   res <- stats::hclust(dist(t(dat)))
   cluster <- cutree(res, K)
 
-  theta_mat <- .average_data(dat, cluster)
+  theta_mat <- stats::cov(.average_data(dat, cluster))
 
   list(theta = theta_mat, cluster = cluster)
 }
@@ -21,7 +21,7 @@ naive_clustering_sbm <- function(dat, K, threshold_quantile = 0.8){
 
   res <- stats::kmeans(new_dat, K)
 
-  theta_mat <- .average_data(dat, res$cluster)
+  theta_mat <- stats::cov(.average_data(dat, res$cluster))
 
   list(theta = theta_mat, cluster = res$cluster)
 }
@@ -48,7 +48,7 @@ naive_clustering_sbm <- function(dat, K, threshold_quantile = 0.8){
   res <- apply(cluster, 2, function(x){
     bool1 <- (vec1[x[1]] == vec1[x[2]])
     bool2 <- (vec2[x[1]] == vec2[x[2]])
-    if(bool1 == bool2) return(1) else return(0)
+    if(bool1 == bool2) return(0) else return(1)
   })
 
   sum(res)/ncol(cluster)
