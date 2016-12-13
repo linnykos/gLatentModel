@@ -1,11 +1,13 @@
-gLatentModel <- function(dat, K, verbose = F){
+gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA){
   n <- nrow(dat); d <- ncol(dat)
 
-  gamma_vec <- estimate_gamma(dat)
+  if(!is.na(seed)) set.seed(seed)
+  gamma_vec <- estimate_gamma(dat, num_subsample)
   cov_mat <- cov(dat)
   c_mat <- cov_mat - diag(gamma_vec)
   if(verbose) print("Finished step 1: estimating gamma")
 
+  if(!is.na(seed)) set.seed(seed)
   pure_idx <- pure_nodes(c_mat, K)
   idx_rest <- c(1:d)[-pure_idx]; new_idx <- c(pure_idx, idx_rest)
   idx_original <- order(new_idx)
@@ -17,7 +19,7 @@ gLatentModel <- function(dat, K, verbose = F){
   partition_list <- partition_cluster(a_mat)
   if(verbose) print("Finished step 3: estimating A")
 
-  gamma_vec <- reestimate_gamma(dat, partition_list)
+  gamma_vec <- reestimate_gamma(dat, partition_list, gamma_vec)
   if(verbose) print("Finished step 4: reestimating gamma")
 
   theta_mat <- reestimate_theta(cov_mat, diag(gamma_vec), partition_list)

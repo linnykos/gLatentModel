@@ -1,7 +1,7 @@
-reestimate_gamma <- function(dat, partition_list){
+reestimate_gamma <- function(dat, partition_list, gamma_vec = NA){
   if(any(sapply(partition_list, length) == 1)){
-    print(partition_list)
-    stop("Singular partitions detected, causing errors")
+    warning("Singular partitions detected, returning original gamma_vec")
+    if(any(is.na(gamma_vec))) stop() else return(gamma_vec)
   }
 
   n <- nrow(dat); d <- ncol(dat); K <- length(partition_list)

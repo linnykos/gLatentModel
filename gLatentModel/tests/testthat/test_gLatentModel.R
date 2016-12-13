@@ -17,3 +17,28 @@ test_that("gLatentModel returns properly", {
   expect_true(is.numeric(res$theta))
   expect_true(is.matrix(res$theta))
 })
+
+test_that("gLatentModel is unaffected (after reshuffling) by the initial order of columns",{
+  set.seed(10)
+  K <- 4; n <- 100; times <- 3
+  L <- huge::huge.generator(n = n, d = K, graph = "hub", g = 3)
+  latent_dat <- L$data
+
+  a_mat <- diag(K)
+  for(i in 1:(times-1)){a_mat <- rbind(a_mat, diag(K))}
+
+  dat <- latent_dat%*%t(a_mat)
+  dat <- dat + rnorm(prod(dim(dat)))
+
+  idx <- sample(1:ncol(dat))
+  a_mat2 <- a_mat[idx,]
+  dat2 <- dat[,idx]
+
+  res <- gLatentModel(dat, K, seed = 10)
+  res <- reshuffle(res, a_mat)
+
+  res2 <- gLatentModel(dat2, K, seed = 10)
+  res2 <- reshuffle(res2, a_mat2)
+
+  expect_true(sum(abs(res$theta - res2$theta))/(K^2) < 1e-2)
+})
