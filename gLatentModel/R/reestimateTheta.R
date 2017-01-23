@@ -1,4 +1,4 @@
-reestimate_theta <- function(cov_mat, gamma_mat, partition_list){
+.reestimate_theta <- function(cov_mat, gamma_mat, partition_list){
   stopifnot(ncol(gamma_mat) == nrow(gamma_mat))
   stopifnot(nrow(cov_mat) == nrow(gamma_mat))
 

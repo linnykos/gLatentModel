@@ -1,14 +1,14 @@
 context("Test reestimate gamma")
 
-## reestimate_gamma is correct
+## .reestimate_gamma is correct
 
-test_that("reestimate_gamma returns properly", {
+test_that(".reestimate_gamma returns properly", {
   set.seed(10)
   a_mat <- rbind(diag(10), diag(10))
   partition_list <- .partition_cluster(a_mat)
   dat <- MASS::mvrnorm(50, rep(0, 20), diag(20))
 
-  res <- reestimate_gamma(dat, partition_list)
+  res <- .reestimate_gamma(dat, partition_list)
 
   expect_true(is.numeric(res))
   expect_true(!is.matrix(res))

@@ -35,10 +35,10 @@ test_that("gLatentModel is unaffected (after reshuffling) by the initial order o
   dat2 <- dat[,idx]
 
   res <- gLatentModel(dat, K, seed = 10)
-  res <- reshuffle(res, a_mat)
+  res <- .reshuffle(res, a_mat)
 
   res2 <- gLatentModel(dat2, K, seed = 10)
-  res2 <- reshuffle(res2, a_mat2)
+  res2 <- .reshuffle(res2, a_mat2)
 
   expect_true(sum(abs(res$cov_latent - res2$cov_latent))/(K^2) < 1e-2)
 })

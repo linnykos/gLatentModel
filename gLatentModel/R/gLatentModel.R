@@ -19,10 +19,10 @@ gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA){
   partition_list <- .partition_cluster(assignment_mat)
   if(verbose) print("Finished step 3: estimating A")
 
-  cov_denoise <- reestimate_gamma(dat, partition_list, cov_denoise)
+  cov_denoise <- .reestimate_gamma(dat, partition_list, cov_denoise)
   if(verbose) print("Finished step 4: reestimating gamma")
 
-  cov_latent <- reestimate_theta(cov_dat, diag(cov_denoise), partition_list)
+  cov_latent <- .reestimate_theta(cov_dat, diag(cov_denoise), partition_list)
 
   cluster <- rep(0, d)
   for(i in 1:K){

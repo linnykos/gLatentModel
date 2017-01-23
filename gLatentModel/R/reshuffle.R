@@ -1,4 +1,4 @@
-reshuffle <- function(gmodel, a_mat){
+.reshuffle <- function(gmodel, a_mat){
   stopifnot(all(dim(a_mat) == dim(gmodel$assignment_mat)))
 
   a_mat_est <- gmodel$assignment_mat; K <- ncol(a_mat)
@@ -28,7 +28,7 @@ reshuffle <- function(gmodel, a_mat){
 }
 
 
-reshuffle_cluster <- function(obj, true_cluster){
+.reshuffle_cluster <- function(obj, true_cluster){
   stopifnot(class(obj) == "gLatentModel", length(true_cluster) == nrow(obj$assignment_mat))
 
   K <- max(true_cluster)

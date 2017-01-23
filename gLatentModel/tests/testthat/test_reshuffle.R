@@ -1,8 +1,8 @@
 context("Test reshuffle of gModel")
 
-## reshuffle is correct
+## .reshuffle is correct
 
-test_that("reshuffle relabels the clusters correctly", {
+test_that(".reshuffle relabels the clusters correctly", {
   set.seed(10)
   K <- 4; n <- 100; times <- 6
   L <- huge::huge.generator(n = n, d = K, graph = "hub", g = 3, verbose = F)
@@ -15,7 +15,7 @@ test_that("reshuffle relabels the clusters correctly", {
   dat <- dat + rnorm(prod(dim(dat)))
 
   res <- gLatentModel(dat, K)
-  res2 <- reshuffle(res, a_mat)
+  res2 <- .reshuffle(res, a_mat)
 
   expect_true(all(sort(res2$partition_list[[1]]) == c(1,5,9,13,17,21)))
   expect_true(all(sort(res2$partition_list[[2]]) == c(2,6,10,14,18,22)))
