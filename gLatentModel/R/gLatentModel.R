@@ -13,8 +13,8 @@ gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA){
   idx_original <- order(new_idx)
   if(verbose) print("Finished step 2: finding pure nodes")
 
-  theta_mat <- estimate_theta(c_mat, pure_idx)
-  a_mat <- estimate_a(theta_mat, c_mat, pure_idx)
+  theta_mat <- estimate_cov_latent(c_mat, pure_idx)
+  a_mat <- estimate_assignment(theta_mat, c_mat, pure_idx)
   a_mat <- a_mat[idx_original,]
   partition_list <- partition_cluster(a_mat)
   if(verbose) print("Finished step 3: estimating A")

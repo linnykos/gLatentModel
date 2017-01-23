@@ -21,7 +21,7 @@ test_that("gLatentModel returns properly", {
 test_that("gLatentModel is unaffected (after reshuffling) by the initial order of columns",{
   set.seed(10)
   K <- 4; n <- 100; times <- 3
-  L <- huge::huge.generator(n = n, d = K, graph = "hub", g = 3)
+  L <- huge::huge.generator(n = n, d = K, graph = "hub", g = 3, verbose = F)
   latent_dat <- L$data
 
   a_mat <- diag(K)

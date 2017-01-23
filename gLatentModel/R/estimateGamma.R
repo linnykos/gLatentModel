@@ -35,7 +35,7 @@ estimate_gamma <- function(dat, num_subsample = NA){
   max(res, na.rm = T)
 }
 
-.neighbor_gamma_estimation <- function(dat, a.vec, num_subsample){
+.neighbor_gamma_estimation <- function(dat, a.vec, num_subsample = NA){
   stopifnot(is.numeric(dat), is.matrix(dat), all(a.vec <= ncol(dat)))
 
   p <- ncol(dat)

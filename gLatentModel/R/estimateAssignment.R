@@ -1,39 +1,39 @@
-estimate_a <- function(theta_mat, c_mat, pure_idx){
-  stopifnot(is.matrix(c_mat), is.numeric(c_mat), all(c_mat == t(c_mat)))
-  stopifnot(is.matrix(theta_mat), is.numeric(theta_mat), all(theta_mat == t(theta_mat)))
-  stopifnot(all(pure_idx <= ncol(c_mat)), all(pure_idx >= 1), all(pure_idx %%1 == 0))
+estimate_assignment <- function(cov_latent, cov_denoise, pure_idx){
+  stopifnot(is.matrix(cov_denoise), is.numeric(cov_denoise), all(cov_denoise == t(cov_denoise)))
+  stopifnot(is.matrix(cov_latent), is.numeric(cov_latent), all(cov_latent == t(cov_latent)))
+  stopifnot(all(pure_idx <= ncol(cov_denoise)), all(pure_idx >= 1), all(pure_idx %%1 == 0))
   stopifnot(all(sort(unique(pure_idx)) == sort(pure_idx)))
 
-  K <- length(pure_idx); d <- ncol(c_mat)
+  K <- length(pure_idx); d <- ncol(cov_denoise)
   pure_idx <- sort(pure_idx); idx_rest <- c(1:d)[-pure_idx]
 
-  c_mat_shuf <- c_mat[c(pure_idx, idx_rest), c(pure_idx, idx_rest)]
+  cov_denoise_shuf <- cov_denoise[c(pure_idx, idx_rest), c(pure_idx, idx_rest)]
 
-  u_mat <- t(sapply(1:(d-K), function(x){
-    .optim_solver_constrainLS(c_mat_shuf[x+K, c(1:K)], theta_mat)
+  assignment_mat <- t(sapply(1:(d-K), function(x){
+    .optim_solver_constrainLS(cov_denoise_shuf[x+K, c(1:K)], cov_latent)
   }))
 
-  rbind(diag(K), u_mat)
+  rbind(diag(K), assignment_mat)
 }
 
-estimate_theta <- function(c_mat, pure_idx){
-  stopifnot(is.matrix(c_mat), is.numeric(c_mat), all(c_mat == t(c_mat)))
-  stopifnot(all(pure_idx <= ncol(c_mat)), all(pure_idx >= 1), all(pure_idx %%1 == 0))
+estimate_cov_latent <- function(cov_denoise, pure_idx){
+  stopifnot(is.matrix(cov_denoise), is.numeric(cov_denoise), all(cov_denoise == t(cov_denoise)))
+  stopifnot(all(pure_idx <= ncol(cov_denoise)), all(pure_idx >= 1), all(pure_idx %%1 == 0))
   stopifnot(all(sort(unique(pure_idx)) == sort(pure_idx)))
 
-  c_mat[pure_idx, pure_idx]
+  cov_denoise[pure_idx, pure_idx]
 }
 
-group_cluster <- function(a_mat){
-  K <- ncol(a_mat)
+group_cluster <- function(assignment_mat){
+  K <- ncol(assignment_mat)
 
-  as.list(sapply(1:K, function(x){which(a_mat[,x] != 0)}))
+  as.list(sapply(1:K, function(x){which(assignment_mat[,x] != 0)}))
 }
 
-partition_cluster <- function(a_mat){
-  K <- ncol(a_mat)
+partition_cluster <- function(assignment_mat){
+  K <- ncol(assignment_mat)
 
-  a_mat <- t(apply(a_mat, 1, function(x){
+  assignment_mat <- t(apply(assignment_mat, 1, function(x){
     idx <- rep(0, K)
     val <- max(x); loc <- which(abs(x - val) < 1e-4)
     if(length(loc) > 1) loc <- loc[sample(1:length(loc), 1)]
@@ -41,7 +41,7 @@ partition_cluster <- function(a_mat){
     idx
   }))
 
-  plyr::alply(a_mat, 2, function(x){which(x != 0)})
+  plyr::alply(assignment_mat, 2, function(x){which(x != 0)})
 }
 
 # using slide 27 from https://web.stanford.edu/~boyd/papers/pdf/admm_slides.pdf

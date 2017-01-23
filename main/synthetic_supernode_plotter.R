@@ -1,15 +1,12 @@
 load("results.RData")
 
 glatent_mat <- sapply(glatent_res, function(x){apply(x, 1, mean)})
-
 hclust_mat <- sapply(hclust_res, function(x){apply(x, 1, mean)})
-
 sbm_mat <- sapply(sbm_res, function(x){apply(x, 1, mean)})
+oracle_vec <- apply(oracle_res[[1]], 1,mean)
 
 glatent_sd <- sapply(glatent_res, function(x){apply(x, 1, sd)})
-
 hclust_sd <- sapply(hclust_res, function(x){apply(x, 1, sd)})
-
 sbm_sd <- sapply(sbm_res, function(x){apply(x, 1, sd)})
 
 name.vec <- c("Max", "Forbenius", "Spectral", "L1")
@@ -27,7 +24,7 @@ for(i in 1:4){
   for(j in 1:3){
     lines(paramMat[,4], mean_list[[j]][i,], col = j+1, lwd = 3)
   }
-  lines()
+  lines(paramMat[,4], rep(oracle_vec[i],length = nrow(paramMat)), lwd = 3)
 }
 
 par(mfrow = c(1,1))

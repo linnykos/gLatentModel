@@ -2,14 +2,14 @@ context("Test estimating A")
 
 ## estimate_theta is correct
 
-test_that("estimate_theta returns properly", {
+test_that("estimate_cov_latent returns properly", {
   set.seed(10)
   K <- 5
   dat <- MASS::mvrnorm(100, rep(0, 10), diag(c(rep(5,K), rep(0.1, 10-K))))
   c_mat <- cov(dat)
   idx <- c(1,5,10)
 
-  res <- estimate_theta(c_mat, idx)
+  res <- estimate_cov_latent(c_mat, idx)
   expect_true(is.matrix(res))
   expect_true(is.numeric(res))
   expect_true(all(dim(res) == rep(length(idx), 2)))
@@ -119,13 +119,13 @@ test_that(".optim_solver_constrainLS enforces complimentary slackness", {
 
 ## estimate_a works properly
 
-test_that("estimate_a returns properly", {
+test_that("estimate_assignment returns properly", {
   set.seed(10)
   theta_mat <- matrix(rnorm(25), 5, 5); theta_mat <- theta_mat + t(theta_mat)
   c_mat <- matrix(rnorm(100), 10, 10); c_mat <- c_mat + t(c_mat)
   pure_idx <- c(1,3,5,7,10)
 
-  res <- estimate_a(theta_mat, c_mat, pure_idx)
+  res <- estimate_assignment(theta_mat, c_mat, pure_idx)
 
   expect_true(is.matrix(res))
   expect_true(is.numeric(res))

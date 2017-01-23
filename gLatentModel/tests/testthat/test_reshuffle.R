@@ -3,14 +3,16 @@ context("Test reshuffle of gModel")
 ## reshuffle is correct
 
 test_that("reshuffle relabels the clusters correctly", {
-  set.seed(20)
-  K <- 4; n <- 100
-  L <- huge::huge.generator(n = n, d = K, graph = "hub", g = 3)
+  set.seed(10)
+  K <- 4; n <- 100; times <- 6
+  L <- huge::huge.generator(n = n, d = K, graph = "hub", g = 3, verbose = F)
   latent_dat <- L$data
 
-  a_mat <- rbind(diag(K), diag(K), diag(K), diag(K), diag(K), diag(K))
+  a_mat <- diag(K)
+  for(i in 1:(times-1)){a_mat <- rbind(a_mat, diag(K))}
+
   dat <- latent_dat%*%t(a_mat)
-  dat <- dat + 0.01*stats::rnorm(prod(dim(dat)))
+  dat <- dat + rnorm(prod(dim(dat)))
 
   res <- gLatentModel(dat, K)
   res2 <- reshuffle(res, a_mat)
