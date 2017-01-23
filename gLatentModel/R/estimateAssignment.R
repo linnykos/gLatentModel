@@ -1,4 +1,4 @@
-estimate_assignment <- function(cov_latent, cov_denoise, pure_idx){
+.estimate_assignment <- function(cov_latent, cov_denoise, pure_idx){
   stopifnot(is.matrix(cov_denoise), is.numeric(cov_denoise), all(cov_denoise == t(cov_denoise)))
   stopifnot(is.matrix(cov_latent), is.numeric(cov_latent), all(cov_latent == t(cov_latent)))
   stopifnot(all(pure_idx <= ncol(cov_denoise)), all(pure_idx >= 1), all(pure_idx %%1 == 0))
@@ -16,7 +16,7 @@ estimate_assignment <- function(cov_latent, cov_denoise, pure_idx){
   rbind(diag(K), assignment_mat)
 }
 
-estimate_cov_latent <- function(cov_denoise, pure_idx){
+.estimate_cov_latent <- function(cov_denoise, pure_idx){
   stopifnot(is.matrix(cov_denoise), is.numeric(cov_denoise), all(cov_denoise == t(cov_denoise)))
   stopifnot(all(pure_idx <= ncol(cov_denoise)), all(pure_idx >= 1), all(pure_idx %%1 == 0))
   stopifnot(all(sort(unique(pure_idx)) == sort(pure_idx)))
@@ -24,13 +24,13 @@ estimate_cov_latent <- function(cov_denoise, pure_idx){
   cov_denoise[pure_idx, pure_idx]
 }
 
-group_cluster <- function(assignment_mat){
+.group_cluster <- function(assignment_mat){
   K <- ncol(assignment_mat)
 
   as.list(sapply(1:K, function(x){which(assignment_mat[,x] != 0)}))
 }
 
-partition_cluster <- function(assignment_mat){
+.partition_cluster <- function(assignment_mat){
   K <- ncol(assignment_mat)
 
   assignment_mat <- t(apply(assignment_mat, 1, function(x){

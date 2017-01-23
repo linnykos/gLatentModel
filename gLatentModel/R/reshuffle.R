@@ -1,7 +1,7 @@
 reshuffle <- function(gmodel, a_mat){
-  stopifnot(all(dim(a_mat) == dim(gmodel$a)))
+  stopifnot(all(dim(a_mat) == dim(gmodel$assignment_mat)))
 
-  a_mat_est <- gmodel$a; K <- ncol(a_mat)
+  a_mat_est <- gmodel$assignment_mat; K <- ncol(a_mat)
 
   #each column is estimate, each row is truth
   dif_mat <- apply(a_mat_est, 2, function(x){
@@ -19,8 +19,8 @@ reshuffle <- function(gmodel, a_mat){
   }
 
   idx_pairing <- idx_pairing[,order(idx_pairing[1,])]
-  gmodel$theta <- gmodel$theta[idx_pairing[2,] ,idx_pairing[2,]]
-  gmodel$a <- gmodel$a[,idx_pairing[2,]]
+  gmodel$cov_latent <- gmodel$cov_latent[idx_pairing[2,] ,idx_pairing[2,]]
+  gmodel$assignment_mat <- gmodel$assignment_mat[,idx_pairing[2,]]
   gmodel$partition_list <- gmodel$partition_list[idx_pairing[2,]]
   gmodel$cluster <- plyr::mapvalues(gmodel$cluster, 1:4, idx_pairing[2,])
 
@@ -29,6 +29,8 @@ reshuffle <- function(gmodel, a_mat){
 
 
 reshuffle_cluster <- function(obj, true_cluster){
+  stopifnot(class(obj) == "gLatentModel", length(true_cluster) == nrow(obj$assignment_mat))
+
   K <- max(true_cluster)
   tab <- table(obj$cluster, true_cluster)
   tab <- tab + 0.01*stats::rnorm(K^2)
@@ -44,7 +46,7 @@ reshuffle_cluster <- function(obj, true_cluster){
   }
 
   idx_pairing <- idx_pairing[,order(idx_pairing[1,])]
-  obj$theta <- obj$theta[idx_pairing[2,] ,idx_pairing[2,]]
+  obj$cov_latent <- obj$cov_latent[idx_pairing[2,] ,idx_pairing[2,]]
   obj$cluster <- plyr::mapvalues(obj$cluster, 1:4, idx_pairing[2,])
 
   obj

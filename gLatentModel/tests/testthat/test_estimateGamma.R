@@ -1,22 +1,22 @@
 context("Test estimate gamma")
 
-## estimate_gamma is correct
+## .estimate_cov_noise is correct
 
-test_that("estimate_gamma returns a vector", {
+test_that(".estimate_cov_noise returns a vector", {
   mat <- matrix(1:25, 5, 5)
-  res <- estimate_gamma(mat)
+  res <- .estimate_cov_noise(mat)
 
   expect_true(is.numeric(res))
   expect_true(length(res) == 5)
 })
 
-test_that("estimate_gamma is roughly correct", {
+test_that(".estimate_cov_noise is roughly correct", {
   set.seed(10)
   mat <- matrix(rnorm(1000), 100)
-  res <- estimate_gamma(mat)
+  res <- .estimate_cov_noise(mat)
 
   mat2 <- matrix(rnorm(100), 10)
-  res2 <- estimate_gamma(mat2)
+  res2 <- .estimate_cov_noise(mat2)
 
   expect_true(sum((res - 1)^2) <= sum((res2 - 1)^2))
 })
@@ -67,11 +67,11 @@ test_that(".v_innerproduct can return values in right relation", {
 
 #####################################
 
-## .neighbor_gamma_estimation is correct
+## .neighbor_noise_estimation is correct
 
-test_that(".neighbor_gamma_estimation returns an index", {
+test_that(".neighbor_noise_estimation returns an index", {
   mat <- matrix(1:25, 5, 5)
-  res <- .neighbor_gamma_estimation(mat, 1)
+  res <- .neighbor_noise_estimation(mat, 1)
 
   expect_true(is.numeric(res))
   expect_true(res %% 1 == 0)
@@ -79,20 +79,20 @@ test_that(".neighbor_gamma_estimation returns an index", {
   expect_true(res <= 5)
 })
 
-test_that(".neighbor_gamma_estimation can handle a vector for a.vec", {
+test_that(".neighbor_noise_estimation can handle a vector for a.vec", {
   mat <- matrix(1:25, 5, 5)
-  res <- .neighbor_gamma_estimation(mat, c(1,4))
+  res <- .neighbor_noise_estimation(mat, c(1,4))
 
   expect_true(is.numeric(res))
   expect_true(!res %in% c(1,4))
 })
 
-test_that(".neighbor_gamma_estimation returns the right relative order", {
+test_that(".neighbor_noise_estimation returns the right relative order", {
  set.seed(10)
   mat <- matrix(rnorm(100), 10, 10)
   mat[,2] <- mat[,1] + 0.01*rnorm(10)
 
-  res <- .neighbor_gamma_estimation(mat, 1)
+  res <- .neighbor_noise_estimation(mat, 1)
 
   expect_true(res == 2)
 })

@@ -5,8 +5,8 @@ context("Test reestimate gamma")
 test_that("reestimate_gamma returns properly", {
   set.seed(10)
   a_mat <- rbind(diag(10), diag(10))
-  partition_list <- partition_cluster(a_mat)
-  dat <- MASS::mvrnorm(20, rep(0, 10), diag(10))
+  partition_list <- .partition_cluster(a_mat)
+  dat <- MASS::mvrnorm(50, rep(0, 20), diag(20))
 
   res <- reestimate_gamma(dat, partition_list)
 

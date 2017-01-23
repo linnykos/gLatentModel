@@ -13,9 +13,9 @@ test_that("gLatentModel returns properly", {
   res <- gLatentModel(dat, K)
 
   expect_true(class(res) == "gLatentModel")
-  expect_true(all(dim(res$theta) == c(2,2)))
-  expect_true(is.numeric(res$theta))
-  expect_true(is.matrix(res$theta))
+  expect_true(all(dim(res$cov_latent) == c(2,2)))
+  expect_true(is.numeric(res$cov_latent))
+  expect_true(is.matrix(res$cov_latent))
 })
 
 test_that("gLatentModel is unaffected (after reshuffling) by the initial order of columns",{
@@ -40,5 +40,5 @@ test_that("gLatentModel is unaffected (after reshuffling) by the initial order o
   res2 <- gLatentModel(dat2, K, seed = 10)
   res2 <- reshuffle(res2, a_mat2)
 
-  expect_true(sum(abs(res$theta - res2$theta))/(K^2) < 1e-2)
+  expect_true(sum(abs(res$cov_latent - res2$cov_latent))/(K^2) < 1e-2)
 })

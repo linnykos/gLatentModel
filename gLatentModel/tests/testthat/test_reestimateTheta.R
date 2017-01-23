@@ -8,7 +8,7 @@ test_that("reestimate_theta returns properly", {
   cov_mat <- stats::cov(dat)
   gamma_mat <- diag(stats::rnorm(6))
   a_mat <- rbind(diag(3), diag(3))
-  partition_list = partition_cluster(a_mat)
+  partition_list = .partition_cluster(a_mat)
 
   res <- reestimate_theta(cov_mat, gamma_mat, partition_list)
 

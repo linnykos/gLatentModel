@@ -7,7 +7,7 @@ reestimate_gamma <- function(dat, partition_list, gamma_vec = NA){
   n <- nrow(dat); d <- ncol(dat); K <- length(partition_list)
 
   var_vec <- sapply(partition_list, function(x){
-    var_vec <- apply(dat[x,], 2, var)
+    var_vec <- apply(dat[,x], 2, stats::var)
     sum(var_vec)/(n * length(x))
   })
 
