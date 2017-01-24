@@ -4,7 +4,7 @@ naive_clustering_hclust <- function(dat, K){
 
   theta_mat <- stats::cov(.average_data(dat, cluster))
 
-  list(theta = theta_mat, cluster = cluster)
+  list(cov_latent = theta_mat, cluster = cluster)
 }
 
 # motivation from https://projecteuclid.org/euclid.aos/1418135620
@@ -23,7 +23,7 @@ naive_clustering_sbm <- function(dat, K, effect_size = 0.5){
 
   theta_mat <- stats::cov(.average_data(dat, res$cluster))
 
-  list(theta = theta_mat, cluster = res$cluster)
+  list(cov_latent = theta_mat, cluster = res$cluster)
 }
 
 .average_data <- function(dat, idx){
