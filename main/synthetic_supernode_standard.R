@@ -17,7 +17,7 @@ rule_closure <- function(method = gLatentModel, ...){
     dat <- latent_dat%*%t(a_mat)
     dat <- dat + vec[4]*rnorm(prod(dim(dat)))
 
-    res <- gLatentModel(dat, K, ...)
+    res <- method(dat, K, ...)
     res <- gLatentModel:::.reshuffle(res, true_cluster)
 
     c(.max_norm_mat(res$cov_latent, L$omega), .forbenius_norm_mat(res$cov_latent, L$omega),
