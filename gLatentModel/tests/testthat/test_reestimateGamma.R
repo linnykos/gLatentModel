@@ -1,14 +1,13 @@
-context("Test reestimate gamma")
+context("Test reestimate cov denoise")
 
 ## .reestimate_gamma is correct
 
 test_that(".reestimate_gamma returns properly", {
   set.seed(10)
-  a_mat <- rbind(diag(10), diag(10))
-  partition_list <- .partition_cluster(a_mat)
+  cluster_vec <- c(1:10, 1:10)
   dat <- MASS::mvrnorm(50, rep(0, 20), diag(20))
 
-  res <- .reestimate_gamma(dat, partition_list)
+  res <- .reestimate_gamma(dat, cluster_vec)
 
   expect_true(is.numeric(res))
   expect_true(!is.matrix(res))

@@ -24,26 +24,6 @@
   cov_denoise[pure_idx, pure_idx]
 }
 
-.group_cluster <- function(assignment_mat){
-  K <- ncol(assignment_mat)
-
-  as.list(sapply(1:K, function(x){which(assignment_mat[,x] != 0)}))
-}
-
-.partition_cluster <- function(assignment_mat){
-  K <- ncol(assignment_mat)
-
-  assignment_mat <- t(apply(assignment_mat, 1, function(x){
-    idx <- rep(0, K)
-    val <- max(x); loc <- which(abs(x - val) < 1e-4)
-    if(length(loc) > 1) loc <- loc[sample(1:length(loc), 1)]
-    idx[loc] <- 1
-    idx
-  }))
-
-  plyr::alply(assignment_mat, 2, function(x){which(x != 0)})
-}
-
 # using slide 27 from https://web.stanford.edu/~boyd/papers/pdf/admm_slides.pdf
 # thanks!
 .optim_solver_constrainLS <- function(vec, mat, z_vec = rep(1/ncol(mat), ncol(mat)),

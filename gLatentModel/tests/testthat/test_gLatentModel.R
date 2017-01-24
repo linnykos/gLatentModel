@@ -26,19 +26,16 @@ test_that("gLatentModel is unaffected (after reshuffling) by the initial order o
 
   a_mat <- diag(K)
   for(i in 1:(times-1)){a_mat <- rbind(a_mat, diag(K))}
+  cluster_vec <- rep(c(1:K), times = times)
 
   dat <- latent_dat%*%t(a_mat)
   dat <- dat + rnorm(prod(dim(dat)))
 
   idx <- sample(1:ncol(dat))
-  a_mat2 <- a_mat[idx,]
   dat2 <- dat[,idx]
 
   res <- gLatentModel(dat, K, seed = 10)
-  res <- .reshuffle(res, a_mat)
-
   res2 <- gLatentModel(dat2, K, seed = 10)
-  res2 <- .reshuffle(res2, a_mat2)
 
-  expect_true(sum(abs(res$cov_latent - res2$cov_latent))/(K^2) < 1e-2)
+  expect_true(sum(abs(sort(as.numeric(res$cov_latent)) - sort(as.numeric(res2$cov_latent))))/K^2 < 1e-2)
 })
