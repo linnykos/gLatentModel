@@ -16,6 +16,7 @@ gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA){
   assignment_mat <- .estimate_assignment(cov_latent, cov_denoise, pure_idx)
   assignment_mat <- assignment_mat[idx_original,]
 
+  if(!is.na(seed)) set.seed(seed)
   partition_mat <- .estimate_partition_mat(assignment_mat, cov_latent)
   cluster_vec <- .estimate_cluster(partition_mat, K)
   if(verbose) print("Finished step 3: estimating clusters")
