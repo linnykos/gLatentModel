@@ -8,10 +8,10 @@ naive_clustering_hclust <- function(dat, K){
 }
 
 # motivation from https://projecteuclid.org/euclid.aos/1418135620
-naive_clustering_sbm <- function(dat, K, threshold_quantile = 0.8){
+naive_clustering_sbm <- function(dat, K, effect_size = 1.96){
   d <- ncol(dat)
-  cor_mat <- cor(dat)
-  idx <- which(abs(cor_mat) > quantile(abs(cor_mat), probs = threshold_quantile))
+  cor_mat <- cor(dat); effect_mat <- psych::fisherz(cor_mat)
+  idx <- which(abs(effect_mat) > effect_size)
 
   adj_mat <- matrix(0, d, d)
   adj_mat[idx] <- 1

@@ -23,7 +23,7 @@
 
   p <- ncol(dat)
   idx <- c(1:p)[-c(a,b)]; idx_comb <- utils::combn(idx, 2)
-  if(ncol(idx_comb) > 10 & !is.na(num_subsample))
+  if(ncol(idx_comb) > 10 & !is.na(num_subsample) & ncol(idx_comb) > num_subsample)
     idx_comb <- idx_comb[,sample(1:ncol(idx_comb))[1:num_subsample]]
   vec_diff <- dat[,a] - dat[,b]
 

@@ -1,3 +1,13 @@
+#' Estimate G Latent Model
+#'
+#' @param dat n by d matrix where there are n samples and d variables
+#' @param K number of clusters for the d variables
+#' @param verbose boolean to print out progress statements
+#' @param seed seed to fix the random subsampling and kmeans within estimation
+#' @param num_subsample number of subsamples when initially estimate variance of noise
+#'
+#' @return
+#' @export
 gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA){
   n <- nrow(dat); d <- ncol(dat)
 
@@ -5,7 +15,7 @@ gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA){
   cov_noise <- .estimate_cov_noise(dat, num_subsample)
   cov_dat <- stats::cov(dat)
   cov_denoise <- cov_dat - diag(cov_noise)
-  if(verbose) print("Finished step 1: estimating gamma")
+  if(verbose) print("Finished step 1: estimating noise variance")
 
   if(!is.na(seed)) set.seed(seed)
   pure_idx <- pure_nodes(cov_denoise, K)
