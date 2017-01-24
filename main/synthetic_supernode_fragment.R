@@ -30,15 +30,15 @@ rule_closure <- function(method = gLatentModel, ...){
 
 #################################################
 
-rule_glatent <- rule_closure()
-rule_hclust <- rule_closure_naive(method = naive_clustering_hclust)
-rule_sbm <- rule_closure_naive(method = naive_clustering_sbm)
+rule_glatent <- rule_closure(method = gLatentModel, seed = 10, num_subsample = 50)
+rule_hclust <- rule_closure(method = naive_clustering_hclust)
+rule_sbm <- rule_closure(method = naive_clustering_sbm)
 criterion <- function(x, vec){x}
 
 glatent_res <- simulationGenerator(rule_glatent, paramMat, criterion,
-  trials, 20)
+                                   trials, 20)
 hclust_res <- simulationGenerator(rule_hclust, paramMat, criterion,
-  trials, 20)
+                                  trials, 20)
 sbm_res <- simulationGenerator(rule_sbm, paramMat, criterion,
-  trials, 20)
+                               trials, 20)
 save.image("results_fragment.RData", safe = F)
