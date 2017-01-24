@@ -11,8 +11,7 @@ LazyData: true
 Imports:
     MASS,
     plyr,
-    huge,
-    LICORS
+    huge
 Suggests:
     testthat
 RoxygenNote: 5.0.1

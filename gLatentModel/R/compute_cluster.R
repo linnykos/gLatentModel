@@ -5,6 +5,6 @@
 .estimate_cluster <- function(partition_mat, K){
   stopifnot(nrow(partition_mat) == ncol(partition_mat))
 
-  res <- LICORS::kmeanspp(partition_mat, K)
+  res <- stats::kmeans(partition_mat, K)
   res$cluster
 }
