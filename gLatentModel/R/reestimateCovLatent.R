@@ -1,4 +1,4 @@
-.reestimate_theta <- function(cov_mat, gamma_mat, assignment_mat){
+.reestimate_cov_latent <- function(cov_mat, gamma_mat, assignment_mat){
   stopifnot(ncol(gamma_mat) == nrow(gamma_mat))
   stopifnot(nrow(cov_mat) == nrow(gamma_mat))
 

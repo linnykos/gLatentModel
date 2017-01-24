@@ -1,4 +1,4 @@
-.reestimate_gamma <- function(dat, cluster_vec, gamma_vec = NA){
+.reestimate_cov_denoise <- function(dat, cluster_vec, gamma_vec = NA){
   if(any(table(cluster_vec) == 1)){
     warning("Singular partitions detected, returning original gamma_vec")
     if(any(is.na(gamma_vec))) stop() else return(gamma_vec)

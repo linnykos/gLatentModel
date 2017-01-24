@@ -21,8 +21,8 @@ gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA){
   if(verbose) print("Finished step 3: estimating clusters")
 
   assignment_mat <- .reestimate_assignment(cluster_vec)
-  cov_denoise <- .reestimate_gamma(dat, cluster_vec, cov_denoise)
-  cov_latent <- .reestimate_theta(cov_dat, diag(cov_denoise), assignment_mat)
+  cov_denoise <- .reestimate_cov_denoise(dat, cluster_vec, cov_denoise)
+  cov_latent <- .reestimate_cov_latent(cov_dat, diag(cov_denoise), assignment_mat)
   if(verbose) print("Finished step 4: reestimating")
 
   structure(list(cov_latent = cov_latent, cluster = cluster_vec), class = "gLatentModel")

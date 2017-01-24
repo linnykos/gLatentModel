@@ -1,4 +1,4 @@
-context("Test estimating A")
+context("Test estimating assignment")
 
 ## estimate_theta is correct
 
