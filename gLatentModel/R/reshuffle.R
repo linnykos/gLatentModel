@@ -17,7 +17,7 @@
 
   idx_pairing <- idx_pairing[,order(idx_pairing[1,])]
   obj$cov_latent <- obj$cov_latent[idx_pairing[2,] ,idx_pairing[2,]]
-  obj$cluster <- plyr::mapvalues(obj$cluster, 1:4, idx_pairing[2,])
+  obj$cluster <- plyr::mapvalues(obj$cluster, 1:K, idx_pairing[2,])
 
   obj
 }
