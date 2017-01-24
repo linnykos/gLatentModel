@@ -1,4 +1,4 @@
-source("source_header.R")
+source("simulation_header.R")
 
 trials <- 100
 paramMat <- cbind(4, 6, ceiling(exp(seq(log(5), log(500), length.out = 30))), 1)
@@ -56,13 +56,13 @@ rule_sbm <- rule_closure_naive(method = naive_clustering_sbm)
 criterion <- function(x, vec){x}
 
 glatent_res <- simulationGenerator(rule_glatent, paramMat, criterion,
-  trials, NA)
+  trials, 20)
 save.image("results.RData", safe = F)
 
 hclust_res <- simulationGenerator(rule_hclust, paramMat, criterion,
-  trials, NA)
+  trials, 20)
 save.image("results.RData", safe = F)
 
 sbm_res <- simulationGenerator(rule_sbm, paramMat, criterion,
-  trials, NA)
+  trials, 20)
 save.image("results.RData", safe = F)

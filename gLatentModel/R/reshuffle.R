@@ -1,5 +1,5 @@
 .reshuffle <- function(obj, cluster_vec){
-  stopifnot(class(obj) == "gLatentModel", length(cluster_vec) == nrow(obj$assignment_mat))
+  stopifnot(length(cluster_vec) == nrow(obj$assignment_mat))
 
   K <- max(cluster_vec)
   tab <- table(obj$cluster, cluster_vec)
