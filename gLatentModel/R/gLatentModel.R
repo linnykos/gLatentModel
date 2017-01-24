@@ -6,7 +6,7 @@
 #' @param seed seed to fix the random subsampling and kmeans within estimation
 #' @param num_subsample number of subsamples when initially estimate variance of noise
 #'
-#' @return
+#' @return a gLatentModel object
 #' @export
 gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA){
   n <- nrow(dat); d <- ncol(dat)
