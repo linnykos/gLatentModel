@@ -66,7 +66,7 @@ naive_clustering_sbm <- function(dat, K, effect_size = 1.96){
 
 .spectral_norm_mat <- function(mat1, mat2){
   stopifnot(all(dim(mat1) == dim(mat2)))
-  max(eigen(mat1 - mat2)$values)
+  max(svd(mat1 - mat2)$d)
 }
 
 .L1_norm_mat <- function(mat1, mat2){

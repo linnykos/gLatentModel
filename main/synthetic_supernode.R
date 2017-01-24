@@ -19,7 +19,7 @@ rule_closure <- function(){
 
     res <- gLatentModel(dat, K, seed = 10, num_subsample = 50)
     res <- gLatentModel:::.reshuffle(res, true_cluster)
-
+ 
     c(.max_norm_mat(res$cov_latent, L$sigma), .forbenius_norm_mat(res$cov_latent, L$sigma),
       .spectral_norm_mat(res$cov_latent, L$sigma), .L1_norm_mat(res$cov_latent, L$sigma),
       .cluster_distance(res$cluster, true_cluster))
