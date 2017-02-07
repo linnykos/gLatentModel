@@ -115,7 +115,7 @@ test_that("gLatentModel is invariant to the order of columns",{
 
   a_mat <- sapply(1:K, function(x){
     vec <- rep(0, K*times)
-    vec[((x-1)*times):(x*times)] <- 1
+    vec[((x-1)*times+1):(x*times)] <- 1
     vec
   })
   true_cluster <- apply(a_mat, 1, function(x){which(x == 1)[1]})
@@ -136,7 +136,7 @@ test_that("gLatentModel is invariant to the order of columns",{
   res2 <- gLatentModel(dat2, K, seed = 10)
   res2 <- gLatentModel:::.reshuffle(res2, true_cluster2)
 
-  #expect_true(all(table(res$cluster) == table(res2$cluster)))
+  expect_true(all(table(res$cluster) == table(res2$cluster)))
 })
 
 

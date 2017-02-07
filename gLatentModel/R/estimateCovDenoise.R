@@ -43,5 +43,15 @@
   res <- sapply(idx, .v_innerproduct, dat = dat, a = a.vec[1],
     num_subsample = num_subsample)
 
-  idx[which.min(res)]
+  min_val <- min(res)
+  min_idx <- which(res == min_val)
+
+  if(length(min_idx)>1){
+    tie_breaker <- apply(dat[,idx[min_idx]], 2, function(x){
+      .l2norm(x - dat[,a.vec[1]])
+    })
+    min_idx <- min_idx[which.min(tie_breaker)]
+  }
+
+  idx[min_idx]
 }

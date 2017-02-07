@@ -21,6 +21,26 @@ test_that(".estimate_cov_noise is roughly correct", {
   expect_true(sum((res - 1)^2) <= sum((res2 - 1)^2))
 })
 
+test_that(".estimate_cov_noise returns 0's when the matrix has duplicate cols", {
+  vec <- c(4, 6, 100)
+  set.seed(2)
+
+  K <- vec[1]; n <- vec[3]; times <- vec[2]
+  L <- diag(K)
+  latent_dat <- MASS::mvrnorm(n, rep(0,K), L)
+
+  a_mat <- sapply(1:K, function(x){
+    vec <- rep(0, K*times)
+    vec[((x-1)*times+1):(x*times)] <- 1
+    vec
+  })
+
+  dat <- latent_dat%*%t(a_mat)
+  res <- .estimate_cov_noise(dat)
+
+  expect_true(all(res == 0))
+})
+
 ################################
 
 ## .l2norm is correct
@@ -95,4 +115,27 @@ test_that(".neighbor_noise_estimation returns the right relative order", {
   res <- .neighbor_noise_estimation(mat, 1)
 
   expect_true(res == 2)
+})
+
+test_that(".neighbor_noise_estimation can handle with duplicate columns", {
+  vec <- c(4, 6, 100)
+  set.seed(2)
+
+  K <- vec[1]; n <- vec[3]; times <- vec[2]
+  L <- diag(K)
+  latent_dat <- MASS::mvrnorm(n, rep(0,K), L)
+
+  a_mat <- sapply(1:K, function(x){
+    vec <- rep(0, K*times)
+    vec[((x-1)*times+1):(x*times)] <- 1
+    vec
+  })
+
+  dat <- latent_dat%*%t(a_mat)
+
+  x <- 19
+  ne1 <- .neighbor_noise_estimation(dat, x, NA)
+  ne2 <- .neighbor_noise_estimation(dat, c(x, ne1), NA)
+
+  expect_true(all(c(ne1, ne2) >= 18))
 })
