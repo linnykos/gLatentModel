@@ -1,6 +1,6 @@
 source("../main/simulation_header.R")
 
-trials <- 10
+trials <- 100
 paramMat <- cbind(6, ceiling(exp(seq(log(5), log(500), length.out = 30))), 1)
 colnames(paramMat) <- c("K", "times_dim", "n", "noise")
 
