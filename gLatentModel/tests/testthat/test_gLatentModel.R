@@ -84,7 +84,7 @@ test_that("gLatentModel test case with high SNR",{
   #expect_true(all(res$cluster == true_cluster))
 })
 
-test_that("gLatentModel test case with high SNR",{
+test_that("gLatentModel doesn't deterioate with small noise",{
   vec <- c(4, 6, 50, 0.01)
   set.seed(2)
 
@@ -92,15 +92,24 @@ test_that("gLatentModel test case with high SNR",{
   L <- diag(K)
   latent_dat <- MASS::mvrnorm(n, rep(0,K), L)
 
-  a_mat <- diag(K)
-  for(i in 1:(times-1)){a_mat <- rbind(a_mat, diag(K))}
+  a_mat <- sapply(1:K, function(x){
+    vec <- rep(0, K*times)
+    vec[((x-1)*times+1):(x*times)] <- 1
+    vec
+  })
   true_cluster <- apply(a_mat, 1, function(x){which(x == 1)})
 
   dat <- latent_dat%*%t(a_mat)
+
+  res <- gLatentModel(dat, K, debugging = T)
+  res <- gLatentModel:::.reshuffle(res, true_cluster)
+
+  ###
+
   dat <- dat + vec[4]*rnorm(prod(dim(dat)))
 
-  res <- gLatentModel(dat, K)
-  res <- gLatentModel:::.reshuffle(res, true_cluster)
+  res2 <- gLatentModel(dat, K)
+  res2 <- gLatentModel:::.reshuffle(res2, true_cluster)
 
   #expect_true(all(res$cluster == true_cluster))
 })
