@@ -9,6 +9,7 @@ r_binary_packages:
     - MASS
     - plyr
     - huge
+    - cord
 
 after_success:
   - Rscript -e 'library(covr); codecov()'

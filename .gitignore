@@ -3,8 +3,11 @@
 *.Ruserdata
 *.out
 .Rproj.user
+*.Rproj.user*
+.Rproj.user*
 *.Rout
 .Rout
 *.ROut
 .ROut
 *Tmp
+.DS_Store

@@ -14,7 +14,7 @@ test_that(".reshuffle works", {
   dat <- latent_dat%*%t(a_mat)
   dat <- dat + rnorm(prod(dim(dat)))
 
-  res <- gLatentModel(dat, K, seed = 10)
+  res <- gLatentModel(dat, K)
 
   cluster_vec2 <- c(4,2,1,3)[res$cluster]
   res2 <- res
@@ -41,7 +41,7 @@ test_that(".reshuffle works with a different K", {
   dat <- latent_dat%*%t(a_mat)
   dat <- dat + 0.1*rnorm(prod(dim(dat)))
 
-  res <- gLatentModel(dat, K, seed = 10)
+  res <- gLatentModel(dat, K)
 
   cluster_vec2 <- c(K:1)[res$cluster]
   res2 <- res

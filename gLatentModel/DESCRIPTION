@@ -11,7 +11,8 @@ LazyData: true
 Imports:
     MASS,
     plyr,
-    huge
+    huge,
+    cord
 Suggests:
     testthat
 RoxygenNote: 5.0.1

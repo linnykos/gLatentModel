@@ -4,18 +4,14 @@
 \alias{gLatentModel}
 \title{Estimate G Latent Model}
 \usage{
-gLatentModel(dat, K, verbose = F, seed = NA, num_subsample = NA)
+gLatentModel(dat, K, ...)
 }
 \arguments{
 \item{dat}{n by d matrix where there are n samples and d variables}
 
 \item{K}{number of clusters for the d variables}
 
-\item{verbose}{boolean to print out progress statements}
-
-\item{seed}{seed to fix the random subsampling and kmeans within estimation}
-
-\item{num_subsample}{number of subsamples when initially estimate variance of noise}
+\item{...}{additional parameters for binary search or cord}
 }
 \value{
 a gLatentModel object

@@ -34,8 +34,8 @@ test_that("gLatentModel is unaffected (after reshuffling) by the initial order o
   idx <- sample(1:ncol(dat))
   dat2 <- dat[,idx]
 
-  res <- gLatentModel(dat, K, seed = 10)
-  res2 <- gLatentModel(dat2, K, seed = 10)
+  res <- gLatentModel(dat, K)
+  res2 <- gLatentModel(dat2, K)
 
   expect_true(sum(abs(sort(as.numeric(res$cov_latent)) - sort(as.numeric(res2$cov_latent))))/K^2 < 1e-2)
 })
@@ -60,10 +60,10 @@ test_that("gLatentModel test case with high SNR",{
   res <- gLatentModel(dat, K)
   res <- gLatentModel:::.reshuffle(res, true_cluster)
 
-  #expect_true(all(res$cluster == true_cluster))
+  expect_true(all(res$cluster == true_cluster))
 })
 
-test_that("gLatentModel test case with high SNR",{
+test_that("gLatentModel test case with high SNR for even larger n",{
   vec <- c(4, 6, 500, 0.01)
   set.seed(2)
 
@@ -81,7 +81,7 @@ test_that("gLatentModel test case with high SNR",{
   res <- gLatentModel(dat, K)
   res <- gLatentModel:::.reshuffle(res, true_cluster)
 
-  #expect_true(all(res$cluster == true_cluster))
+  expect_true(all(res$cluster == true_cluster))
 })
 
 test_that("gLatentModel doesn't deterioate with small noise",{
@@ -101,7 +101,7 @@ test_that("gLatentModel doesn't deterioate with small noise",{
 
   dat <- latent_dat%*%t(a_mat)
 
-  res <- gLatentModel(dat, K, debugging = T)
+  res <- gLatentModel(dat, K)
   res <- gLatentModel:::.reshuffle(res, true_cluster)
 
   ###
@@ -111,7 +111,7 @@ test_that("gLatentModel doesn't deterioate with small noise",{
   res2 <- gLatentModel(dat, K)
   res2 <- gLatentModel:::.reshuffle(res2, true_cluster)
 
-  #expect_true(all(res$cluster == true_cluster))
+  expect_true(all(res$cluster == res2$cluster))
 })
 
 test_that("gLatentModel is invariant to the order of columns",{
@@ -131,7 +131,7 @@ test_that("gLatentModel is invariant to the order of columns",{
 
   dat <- latent_dat%*%t(a_mat)
 
-  res <- gLatentModel(dat, K, seed = 10)
+  res <- gLatentModel(dat, K)
   res <- gLatentModel:::.reshuffle(res, true_cluster)
 
   #####
@@ -142,7 +142,7 @@ test_that("gLatentModel is invariant to the order of columns",{
 
   dat2 <- latent_dat%*%t(a_mat2)
 
-  res2 <- gLatentModel(dat2, K, seed = 10)
+  res2 <- gLatentModel(dat2, K)
   res2 <- gLatentModel:::.reshuffle(res2, true_cluster2)
 
   expect_true(all(table(res$cluster) == table(res2$cluster)))
