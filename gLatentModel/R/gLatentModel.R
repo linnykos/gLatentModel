@@ -10,6 +10,7 @@ gLatentModel <- function(dat, K, ...){
   n <- nrow(dat); d <- ncol(dat); iter <- 1
 
   clust <- .cord_binary_search(dat, K, ...)
+  clust <- .adjustment_cluster(clust, K)
 
   dat_avg <- .average_data(dat, clust)
   cov_latent <- stats::cov(dat_avg)
@@ -17,7 +18,7 @@ gLatentModel <- function(dat, K, ...){
   structure(list(cov_latent = cov_latent, cluster = clust), class = "gLatentModel")
 }
 
-.cord_binary_search <- function(dat, K, max_iter = 3, low_coef = 0.5, high_coef = 3.5, ...){
+.cord_binary_search <- function(dat, K, max_iter = 5, low_coef = 0.5, high_coef = 3.5, ...){
   iter <- 1
 
   while(T){
@@ -36,6 +37,50 @@ gLatentModel <- function(dat, K, ...){
   }
 
   res
+}
+
+.adjustment_cluster <- function(clust, K){
+  while(T){
+    if(length(unique(clust)) > K){
+      clust <- .adjustment_cluster_remove(clust)
+    } else if(length(unique(clust)) < K){
+      clust <- .adjustment_cluster_add(clust)
+    } else{
+      break()
+    }
+  }
+
+  clust
+}
+
+.adjustment_cluster_add <- function(clust){
+  tab <- table(clust)
+  idx <- which.max(tab)
+  val <- as.numeric(names(tab)[idx])
+
+  idx <- which(clust == val)
+  idx_split <- sample(idx, floor(length(idx)/2))
+  clust[idx_split] <- length(unique(clust))+1
+
+  clust
+}
+
+.adjustment_cluster_remove <- function(clust){
+  tab <- table(clust)
+  idx <- order(tab, decreasing = F)[1:2]
+  val <- as.numeric(names(tab)[idx])
+
+  idx_merge <- which(clust %in% val)
+  clust[idx_merge] <- val[1]
+
+  #reindex
+  uniq <- unique(clust)
+  clust2 <- clust
+  for(i in 1:length(uniq)){
+    clust2[clust == uniq[i]] <- i
+  }
+
+  clust2
 }
 
 .average_data <- function(dat, idx){

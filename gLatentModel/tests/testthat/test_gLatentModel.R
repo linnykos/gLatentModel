@@ -148,4 +148,66 @@ test_that("gLatentModel is invariant to the order of columns",{
   expect_true(all(table(res$cluster) == table(res2$cluster)))
 })
 
+test_that("gLatentModel will output the right number of clusters", {
+  vec <- c(4, 6, 5, 1)
+  set.seed(1)
 
+  K <- vec[1]; n <- vec[3]; times <- vec[2]
+  L <- huge::huge.generator(n, d = K, graph = "scale-free", verbose = F)
+  latent_dat <- MASS::mvrnorm(n, rep(0,K), L$omega)
+
+  a_mat <- diag(K)
+  for(i in 1:(times-1)){a_mat <- rbind(a_mat, diag(K))}
+  true_cluster <- apply(a_mat, 1, function(x){which(x == 1)})
+
+  dat <- latent_dat%*%t(a_mat)
+  dat <- dat + vec[4]*rnorm(prod(dim(dat)))
+
+  res <- gLatentModel(dat, K)
+
+  expect_true(length(unique(res$cluster)) == 4)
+
+})
+
+##########################
+
+## .adjustment_cluster is correct
+
+test_that(".adjustment_cluster correctly removes one cluster", {
+  clust <- rep(1:6, each = 5)
+  res <- .adjustment_cluster(clust, 5)
+
+  expect_true(all(sort(unique(res)) == c(1:5)))
+})
+
+test_that(".adjustment_cluster correctly adds one cluster", {
+  clust <- rep(1:6, each = 5)
+  res <- .adjustment_cluster(clust, 7)
+
+  expect_true(all(sort(unique(res)) == c(1:7)))
+})
+
+test_that(".adjustment_cluster correctly removes many clusters", {
+  clust <- rep(1:6, each = 5)
+  res <- .adjustment_cluster(clust, 4)
+
+  expect_true(all(sort(unique(res)) == c(1:4)))
+})
+
+test_that(".adjustment_cluster correctly adds many clusters", {
+  clust <- rep(1:6, each = 5)
+  res <- .adjustment_cluster(clust, 9)
+
+  expect_true(all(sort(unique(res)) == c(1:9)))
+})
+
+############################
+
+## .adjustment_cluster_add is correct
+
+test_that(".adjustment_cluster_add adds", {
+  clust <- rep(1:6, each = 5)
+  res <- .adjustment_cluster_add(clust)
+
+  expect_true(all(sort(unique(res)) == c(1:7)))
+})
