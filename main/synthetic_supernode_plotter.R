@@ -1,5 +1,5 @@
 rm(list=ls())
-load("../main/results_standard.RData")
+load("../results/results_standard.RData")
 #load("../main/results_fragment.RData")
 
 glatent_mat <- sapply(glatent_res, function(x){apply(x, 1, mean)})

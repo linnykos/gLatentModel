@@ -52,7 +52,9 @@ test_that("gLatentModel test case with high SNR",{
 
   a_mat <- diag(K)
   for(i in 1:(times-1)){a_mat <- rbind(a_mat, diag(K))}
+  a_mat <- a_mat[,K:1]
   true_cluster <- apply(a_mat, 1, function(x){which(x == 1)})
+
 
   dat <- latent_dat%*%t(a_mat)
   dat <- dat + vec[4]*rnorm(prod(dim(dat)))
@@ -73,7 +75,9 @@ test_that("gLatentModel test case with high SNR for even larger n",{
 
   a_mat <- diag(K)
   for(i in 1:(times-1)){a_mat <- rbind(a_mat, diag(K))}
+  a_mat <- a_mat[,K:1]
   true_cluster <- apply(a_mat, 1, function(x){which(x == 1)})
+
 
   dat <- latent_dat%*%t(a_mat)
   dat <- dat + vec[4]*rnorm(prod(dim(dat)))
@@ -97,7 +101,9 @@ test_that("gLatentModel doesn't deterioate with small noise",{
     vec[((x-1)*times+1):(x*times)] <- 1
     vec
   })
+  a_mat <- a_mat[,K:1]
   true_cluster <- apply(a_mat, 1, function(x){which(x == 1)})
+
 
   dat <- latent_dat%*%t(a_mat)
 
@@ -127,7 +133,9 @@ test_that("gLatentModel is invariant to the order of columns",{
     vec[((x-1)*times+1):(x*times)] <- 1
     vec
   })
+  a_mat <- a_mat[,K:1]
   true_cluster <- apply(a_mat, 1, function(x){which(x == 1)[1]})
+
 
   dat <- latent_dat%*%t(a_mat)
 
@@ -138,7 +146,9 @@ test_that("gLatentModel is invariant to the order of columns",{
 
   a_mat2 <- diag(K)
   for(i in 1:(times-1)){a_mat2 <- rbind(a_mat2, diag(K))}
+  a_mat2 <- a_mat2[,K:1]
   true_cluster2 <- apply(a_mat, 1, function(x){which(x == 1)[1]})
+
 
   dat2 <- latent_dat%*%t(a_mat2)
 
@@ -158,7 +168,9 @@ test_that("gLatentModel will output the right number of clusters", {
 
   a_mat <- diag(K)
   for(i in 1:(times-1)){a_mat <- rbind(a_mat, diag(K))}
+  a_mat <- a_mat[,K:1]
   true_cluster <- apply(a_mat, 1, function(x){which(x == 1)})
+
 
   dat <- latent_dat%*%t(a_mat)
   dat <- dat + vec[4]*rnorm(prod(dim(dat)))
@@ -210,4 +222,37 @@ test_that(".adjustment_cluster_add adds", {
   res <- .adjustment_cluster_add(clust)
 
   expect_true(all(sort(unique(res)) == c(1:7)))
+})
+
+#############################
+
+## .average_data is correct
+
+test_that(".average_data preserves order", {
+  vec <- c(4, 6, 500, 1); set.seed(1)
+
+  #run the simulation
+  K <- vec[1]; n <- vec[3]; times <- vec[2]
+  L <- huge::huge.generator(n, d = K, graph = "scale-free", verbose = F)
+  latent_dat <- MASS::mvrnorm(n, rep(0,K), L$omega)
+
+  a_mat <- diag(K)
+  for(i in 1:(times-1)){a_mat <- rbind(a_mat, diag(K))}
+  a_mat <- a_mat[,K:1]
+  true_cluster <- apply(a_mat, 1, function(x){which(x == 1)})
+
+
+  dat <- latent_dat%*%t(a_mat)
+  dat <- dat + vec[4]*rnorm(prod(dim(dat)))
+
+  res <- gLatentModel(dat, K)
+
+  new_dat <- sapply(1:K, function(x){
+    idx <- which(res$cluster == x)
+    rowMeans(dat[,idx])
+  })
+
+  new_cov <- cov(new_dat)
+
+  expect_true(sum(abs(res$cov_latent - new_cov))/nrow(new_cov)^2 < 1e-4)
 })
