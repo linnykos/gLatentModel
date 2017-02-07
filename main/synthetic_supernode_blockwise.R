@@ -17,6 +17,7 @@ rule_closure <- function(method = gLatentModel, ...){
       vec
     })
     true_cluster <- apply(a_mat, 1, function(x){which(x == 1)})
+    a_mat <- a_mat[,K:1]
 
     dat <- latent_dat%*%t(a_mat)
     dat <- dat + vec[3]*rnorm(prod(dim(dat)))
