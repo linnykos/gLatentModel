@@ -39,3 +39,70 @@ test_that("gLatentModel is unaffected (after reshuffling) by the initial order o
 
   expect_true(sum(abs(sort(as.numeric(res$cov_latent)) - sort(as.numeric(res2$cov_latent))))/K^2 < 1e-2)
 })
+
+###################################
+
+test_that("gLatentModel test case with high SNR",{
+  vec <- c(4, 6, 100, 0.01)
+  set.seed(2)
+
+  K <- vec[1]; n <- vec[3]; times <- vec[2]
+  L <- huge::huge.generator(n, d = K, graph = "scale-free", verbose = F)
+  latent_dat <- MASS::mvrnorm(n, rep(0,K), L$omega)
+
+  a_mat <- diag(K)
+  for(i in 1:(times-1)){a_mat <- rbind(a_mat, diag(K))}
+  true_cluster <- apply(a_mat, 1, function(x){which(x == 1)})
+
+  dat <- latent_dat%*%t(a_mat)
+  dat <- dat + vec[4]*rnorm(prod(dim(dat)))
+
+  res <- gLatentModel(dat, K)
+  res <- gLatentModel:::.reshuffle(res, true_cluster)
+
+  #expect_true(all(res$cluster == true_cluster))
+})
+
+test_that("gLatentModel test case with high SNR",{
+  vec <- c(4, 6, 500, 0.01)
+  set.seed(2)
+
+  K <- vec[1]; n <- vec[3]; times <- vec[2]
+  L <- huge::huge.generator(n, d = K, graph = "scale-free", verbose = F)
+  latent_dat <- MASS::mvrnorm(n, rep(0,K), L$omega)
+
+  a_mat <- diag(K)
+  for(i in 1:(times-1)){a_mat <- rbind(a_mat, diag(K))}
+  true_cluster <- apply(a_mat, 1, function(x){which(x == 1)})
+
+  dat <- latent_dat%*%t(a_mat)
+  dat <- dat + vec[4]*rnorm(prod(dim(dat)))
+
+  res <- gLatentModel(dat, K)
+  res <- gLatentModel:::.reshuffle(res, true_cluster)
+
+  #expect_true(all(res$cluster == true_cluster))
+})
+
+test_that("gLatentModel test case with high SNR",{
+  vec <- c(4, 6, 50, 0.01)
+  set.seed(2)
+
+  K <- vec[1]; n <- vec[3]; times <- vec[2]
+  L <- diag(K)
+  latent_dat <- MASS::mvrnorm(n, rep(0,K), L)
+
+  a_mat <- diag(K)
+  for(i in 1:(times-1)){a_mat <- rbind(a_mat, diag(K))}
+  true_cluster <- apply(a_mat, 1, function(x){which(x == 1)})
+
+  dat <- latent_dat%*%t(a_mat)
+  dat <- dat + vec[4]*rnorm(prod(dim(dat)))
+
+  res <- gLatentModel(dat, K)
+  res <- gLatentModel:::.reshuffle(res, true_cluster)
+
+  #expect_true(all(res$cluster == true_cluster))
+})
+
+

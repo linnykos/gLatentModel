@@ -1,4 +1,4 @@
-source("simulation_header.R")
+source("../main/simulation_header.R")
 
 trials <- 10
 paramMat <- cbind(4, 6, ceiling(exp(seq(log(5), log(500), length.out = 30))), 1)

@@ -8,7 +8,8 @@
 #'
 #' @return a gLatentModel object
 #' @export
-gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA){
+gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA,
+                         debugging = F){
   n <- nrow(dat); d <- ncol(dat)
 
   if(!is.na(seed)) set.seed(seed)
@@ -31,10 +32,17 @@ gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA){
   cluster_vec <- .estimate_cluster(partition_mat, K)
   if(verbose) print("Finished step 3: estimating clusters")
 
-  assignment_mat <- .reestimate_assignment(cluster_vec)
-  cov_denoise <- .reestimate_cov_denoise(dat, cluster_vec, cov_denoise)
-  cov_latent <- .reestimate_cov_latent(cov_dat, diag(cov_denoise), assignment_mat)
+  assignment_mat_2 <- .reestimate_assignment(cluster_vec)
+  cov_denoise_2 <- .reestimate_cov_denoise(dat, cluster_vec, cov_denoise)
+  cov_latent_2 <- .reestimate_cov_latent(cov_dat, diag(cov_denoise_2), assignment_mat_2)
   if(verbose) print("Finished step 4: reestimating")
 
-  structure(list(cov_latent = cov_latent, cluster = cluster_vec), class = "gLatentModel")
+  if(!debugging) {
+    structure(list(cov_latent = cov_latent_2, cluster = cluster_vec), class = "gLatentModel")
+  } else {
+    structure(list(cov_latent = cov_latent_2, cluster = cluster_vec,
+                   assignment_mat_org = assignment_mat, cov_latent_org = cov_latent,
+                   cov_denoise = cov_denoise_2, cov_denoise_org = cov_denoise,
+                   pure_idx = pure_idx), class = "gLatentModel")
+  }
 }
