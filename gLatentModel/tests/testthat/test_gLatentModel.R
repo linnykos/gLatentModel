@@ -105,4 +105,38 @@ test_that("gLatentModel test case with high SNR",{
   #expect_true(all(res$cluster == true_cluster))
 })
 
+test_that("gLatentModel is invariant to the order of columns",{
+  vec <- c(4, 6, 100)
+  set.seed(2)
+
+  K <- vec[1]; n <- vec[3]; times <- vec[2]
+  L <- diag(K)
+  latent_dat <- MASS::mvrnorm(n, rep(0,K), L)
+
+  a_mat <- sapply(1:K, function(x){
+    vec <- rep(0, K*times)
+    vec[((x-1)*times):(x*times)] <- 1
+    vec
+  })
+  true_cluster <- apply(a_mat, 1, function(x){which(x == 1)[1]})
+
+  dat <- latent_dat%*%t(a_mat)
+
+  res <- gLatentModel(dat, K, seed = 10)
+  res <- gLatentModel:::.reshuffle(res, true_cluster)
+
+  #####
+
+  a_mat2 <- diag(K)
+  for(i in 1:(times-1)){a_mat2 <- rbind(a_mat2, diag(K))}
+  true_cluster2 <- apply(a_mat, 1, function(x){which(x == 1)[1]})
+
+  dat2 <- latent_dat%*%t(a_mat2)
+
+  res2 <- gLatentModel(dat2, K, seed = 10)
+  res2 <- gLatentModel:::.reshuffle(res2, true_cluster2)
+
+  #expect_true(all(table(res$cluster) == table(res2$cluster)))
+})
+
 

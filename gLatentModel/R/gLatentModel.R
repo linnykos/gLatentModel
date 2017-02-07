@@ -33,8 +33,8 @@ gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA,
   if(verbose) print("Finished step 3: estimating clusters")
 
   assignment_mat_2 <- .reestimate_assignment(cluster_vec)
-  cov_denoise_2 <- .reestimate_cov_denoise(dat, cluster_vec, cov_denoise)
-  cov_latent_2 <- .reestimate_cov_latent(cov_dat, diag(cov_denoise_2), assignment_mat_2)
+  cov_noise_2 <- .reestimate_cov_denoise(dat, cluster_vec, cov_noise)
+  cov_latent_2 <- .reestimate_cov_latent(cov_dat, diag(cov_noise_2), assignment_mat_2)
   if(verbose) print("Finished step 4: reestimating")
 
   if(!debugging) {
@@ -42,7 +42,7 @@ gLatentModel <- function(dat, K, verbose = F, seed = NA, num_subsample = NA,
   } else {
     structure(list(cov_latent = cov_latent_2, cluster = cluster_vec,
                    assignment_mat_org = assignment_mat, cov_latent_org = cov_latent,
-                   cov_denoise = cov_denoise_2, cov_denoise_org = cov_denoise,
+                   cov_noise = cov_noise_2, cov_noise_org = cov_noise,
                    pure_idx = pure_idx), class = "gLatentModel")
   }
 }

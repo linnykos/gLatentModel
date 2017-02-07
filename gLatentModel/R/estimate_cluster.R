@@ -5,6 +5,6 @@
 .estimate_cluster <- function(partition_mat, K){
   stopifnot(nrow(partition_mat) == ncol(partition_mat))
 
-  res <- stats::kmeans(partition_mat, K)
+  res <- stats::kmeans(scale(partition_mat), K)
   res$cluster
 }

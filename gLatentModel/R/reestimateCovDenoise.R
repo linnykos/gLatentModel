@@ -8,7 +8,7 @@
 
   var_vec <- sapply(1:K, function(x){
     idx <- which(cluster_vec == x)
-    var_vec <- apply(dat[,idx], 2, stats::var)
+    var_vec <- apply(dat[,idx, drop = F], 2, stats::var)
     sum(var_vec)/(n * length(idx))
   })
 

@@ -13,5 +13,4 @@ test_that("pure_node returns properly", {
   expect_true(is.numeric(res))
   expect_true(length(res) == K)
   expect_true(all(res%%1 == 0))
-  expect_true(all(sort(res) == c(1:5)))
 })
