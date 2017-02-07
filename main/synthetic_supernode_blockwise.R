@@ -46,5 +46,5 @@ hclust_res <- simulationGenerator(rule_hclust, paramMat, criterion,
                                   trials, 20)
 sbm_res <- simulationGenerator(rule_sbm, paramMat, criterion,
                                trials, 20)
-save.image("results_blockwise.RData", safe = F)
+save.image("../results/results_blockwise.RData", safe = F)
 
