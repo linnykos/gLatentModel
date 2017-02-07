@@ -25,7 +25,8 @@ rule_closure <- function(method = gLatentModel, ...){
       .spectral_norm_mat(res$cov_latent, L$omega), .L1_norm_mat(res$cov_latent, L$omega),
       .graph_edge_distance(res$cov_latent, L$omega, n),
       .cluster_distance(res$cluster, true_cluster),
-      .jaccard_distance(res$cluster, true_cluster))
+      .jaccard_distance(res$cluster, true_cluster),
+      sum(abs(dat))) #the last entry for the signature
   }
 }
 

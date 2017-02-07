@@ -1,6 +1,6 @@
 rm(list=ls())
-load("../results/results_standard.RData")
-#load("../main/results_fragment.RData")
+#load("../results/results_standard.RData")
+load("../main/results_fragment.RData")
 
 glatent_mat <- sapply(glatent_res, function(x){apply(x, 1, mean)})
 hclust_mat <- sapply(hclust_res, function(x){apply(x, 1, mean)})
@@ -19,8 +19,8 @@ sd_list <- list(glatent_sd, hclust_sd, sbm_sd)
 par(mfrow = c(1, 4))
 for(i in 1:4){
   xlim = c(min(paramMat[,3]), max(paramMat[,3]))
-  ylim = c(min(sapply(mean_list, function(x){min(x[i,])})),
-    max(sapply(mean_list, function(x){max(x[i,])})))
+  ylim = c(min(sapply(1:3, function(x){min(mean_list[[x]][i,] - sd_list[[x]][i,])})),
+    max(sapply(1:3, function(x){max(mean_list[[x]][i,] + sd_list[[x]][i,])})))
 
   plot(NA, xlim = xlim, ylim = ylim, xlab = "Error", ylab = "n",
        main = name.vec[i])
@@ -37,8 +37,8 @@ for(i in 1:4){
 par(mfrow = c(1, 1))
 for(i in 5){
   xlim = c(min(paramMat[,3]), max(paramMat[,3]))
-  ylim = c(min(sapply(mean_list, function(x){min(x[i,])})),
-           max(sapply(mean_list, function(x){max(x[i,])})))
+  ylim = c(min(sapply(1:3, function(x){min(mean_list[[x]][i,] - sd_list[[x]][i,])})),
+           max(sapply(1:3, function(x){max(mean_list[[x]][i,] + sd_list[[x]][i,])})))
 
   plot(NA, xlim = xlim, ylim = ylim, xlab = "Error", ylab = "n",
        main =  name.vec[i])
@@ -55,8 +55,8 @@ for(i in 5){
 par(mfrow = c(1, 2))
 for(i in 6:7){
   xlim = c(min(paramMat[,3]), max(paramMat[,3]))
-  ylim = c(min(sapply(mean_list, function(x){min(x[i,])})),
-           max(sapply(mean_list, function(x){max(x[i,])})))
+  ylim = c(min(sapply(1:3, function(x){min(mean_list[[x]][i,] - sd_list[[x]][i,])})),
+           max(sapply(1:3, function(x){max(mean_list[[x]][i,] + sd_list[[x]][i,])})))
 
   plot(NA, xlim = xlim, ylim = ylim, xlab = "Error", ylab = "n",
        main = name.vec[i])

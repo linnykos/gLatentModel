@@ -12,7 +12,7 @@ rule_closure <- function(method = gLatentModel, ...){
 
     block_idx <- c(0,sapply(2:(K+1), function(x){sum(1:x)}))
     a_mat <- sapply(2:(K+1), function(i){
-      vec <- rep(0, nrow(cov_mat))
+      vec <- rep(0, max(block_idx))
       vec[(block_idx[i-1]+1):block_idx[i]] <- 1
       vec
     })
@@ -29,7 +29,8 @@ rule_closure <- function(method = gLatentModel, ...){
       .spectral_norm_mat(res$cov_latent, L$omega), .L1_norm_mat(res$cov_latent, L$omega),
       .graph_edge_distance(res$cov_latent, L$omega, n),
       .cluster_distance(res$cluster, true_cluster),
-      .jaccard_distance(res$cluster, true_cluster))
+      .jaccard_distance(res$cluster, true_cluster),
+      sum(abs(dat))) #the last entry for the signature
   }
 }
 
