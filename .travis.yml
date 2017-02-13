@@ -10,6 +10,7 @@ r_binary_packages:
     - plyr
     - huge
     - cord
+    - combinat
 
 after_success:
   - Rscript -e 'library(covr); codecov()'

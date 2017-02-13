@@ -12,7 +12,8 @@ Imports:
     MASS,
     plyr,
     huge,
-    cord
+    cord,
+    combinat
 Suggests:
     testthat
 RoxygenNote: 5.0.1
