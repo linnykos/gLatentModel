@@ -1,3 +1,10 @@
+#' Variable clustering via Hierarchical Clustering
+#'
+#' @param dat data matrix n x d
+#' @param K the number of clusters
+#'
+#' @return a list containing the latent covariance matrix and the clustering
+#' @export
 naive_clustering_hclust <- function(dat, K){
   res <- stats::hclust(stats::dist(t(dat)))
   cluster <- stats::cutree(res, K)
@@ -7,7 +14,15 @@ naive_clustering_hclust <- function(dat, K){
   list(cov_latent = theta_mat, cluster = cluster)
 }
 
-# motivation from https://projecteuclid.org/euclid.aos/1418135620
+#' Variable clustering via Stochastic Block Model
+#'
+#' Motivated from https://projecteuclid.org/euclid.aos/1418135620
+#'
+#' @param dat data matrix n x d
+#' @param K the number of clusters
+#'
+#' @return a list containing the latent covariance matrix and the clustering
+#' @export
 naive_clustering_sbm <- function(dat, K){
   d <- ncol(dat); n <- nrow(dat)
 

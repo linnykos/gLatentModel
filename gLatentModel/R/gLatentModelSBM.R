@@ -1,3 +1,12 @@
+#' Estimate G Latent Model
+#'
+#' @param dat n by d matrix where there are n samples and d variables
+#' @param K number of clusters for the d variables
+#' @param debugging boolean on whether or not to pass additional parameters out
+#' @param ... additional parameters for binary search or cord
+#'
+#' @return a gLatentModel object
+#' @export
 gLatentModel_sbm <- function(dat, K, debugging = F, ...){
   n <- nrow(dat); d <- ncol(dat)
 
