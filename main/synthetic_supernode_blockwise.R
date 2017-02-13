@@ -38,11 +38,14 @@ rule_closure <- function(method = gLatentModel, ...){
 #################################################
 
 rule_glatent <- rule_closure(method = gLatentModel)
+rule_glatent_sbm <- rule_closure(method = gLatentModel_sbm)
 rule_hclust <- rule_closure(method = naive_clustering_hclust)
 rule_sbm <- rule_closure(method = naive_clustering_sbm)
 criterion <- function(x, vec){x}
 
 glatent_res <- simulationGenerator(rule_glatent, paramMat, criterion,
+                                   trials, 20)
+glatent_sbm_res <- simulationGenerator(rule_glatent_sbm, paramMat, criterion,
                                    trials, 20)
 hclust_res <- simulationGenerator(rule_hclust, paramMat, criterion,
                                   trials, 20)
