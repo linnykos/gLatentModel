@@ -15,7 +15,8 @@ gLatentModel <- function(dat, K, ...){
   dat_avg <- .average_data(dat, clust)
   cov_latent <- stats::cov(dat_avg)
 
-  structure(list(cov_latent = cov_latent, cluster = clust), class = "gLatentModel")
+  structure(list(cov_latent = cov_latent, cluster = clust, method = "cord"),
+            class = "gLatentModel")
 }
 
 .cord_binary_search <- function(dat, K, max_iter = 5, low_coef = 0.5, high_coef = 3.5, ...){
