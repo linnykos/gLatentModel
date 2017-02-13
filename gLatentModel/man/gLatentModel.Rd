@@ -19,4 +19,3 @@ a gLatentModel object
 \description{
 Estimate G Latent Model
 }
-

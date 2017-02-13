@@ -1,6 +1,6 @@
 naive_clustering_hclust <- function(dat, K){
-  res <- stats::hclust(dist(t(dat)))
-  cluster <- cutree(res, K)
+  res <- stats::hclust(stats::dist(t(dat)))
+  cluster <- stats::cutree(res, K)
 
   theta_mat <- stats::cov(.average_data(dat, cluster))
 
