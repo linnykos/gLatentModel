@@ -13,7 +13,8 @@ Imports:
     plyr,
     huge,
     cord,
-    combinat
+    combinat,
+    psych
 Suggests:
     testthat
 RoxygenNote: 5.0.1

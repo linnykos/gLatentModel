@@ -1,31 +1,3 @@
-naive_clustering_hclust <- function(dat, K){
-  res <- stats::hclust(dist(t(dat)))
-  cluster <- cutree(res, K)
-
-  theta_mat <- stats::cov(.average_data(dat, cluster))
-
-  list(cov_latent = theta_mat, cluster = cluster)
-}
-
-# motivation from https://projecteuclid.org/euclid.aos/1418135620
-naive_clustering_sbm <- function(dat, K, effect_size = 0.5){
-  d <- ncol(dat)
-  cor_mat <- cor(dat); effect_mat <- psych::fisherz(cor_mat)
-  idx <- which(abs(effect_mat) > effect_size)
-
-  adj_mat <- matrix(0, d, d)
-  adj_mat[idx] <- 1
-
-  eig <- eigen(adj_mat)
-  new_dat <- eig$vectors[,1:K]
-
-  res <- stats::kmeans(new_dat, K)
-
-  theta_mat <- stats::cov(.average_data(dat, res$cluster))
-
-  list(cov_latent = theta_mat, cluster = res$cluster)
-}
-
 .average_data <- function(dat, idx){
   K <- max(idx)
 
