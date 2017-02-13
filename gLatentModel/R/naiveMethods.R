@@ -9,7 +9,7 @@ naive_clustering_hclust <- function(dat, K){
 
 # motivation from https://projecteuclid.org/euclid.aos/1418135620
 naive_clustering_sbm <- function(dat, K){
-  d <- ncol(dat)
+  d <- ncol(dat); n <- nrow(dat)
 
   cor_est <- stats::cor(dat)
 
@@ -23,10 +23,10 @@ naive_clustering_sbm <- function(dat, K){
   g_est <- matrix(0, d, d)
   g_est[idx1] <- 1
 
-  eig <- eigen(adj_mat)
+  eig <- eigen(g_est)
   new_dat <- eig$vectors[,1:K]
 
-  res <- stats::kmeans(new_dat, K)
+  res <- stats::kmeans(new_dat, K, nstart = 10)
 
   theta_mat <- stats::cov(.average_data(dat, res$cluster))
 
