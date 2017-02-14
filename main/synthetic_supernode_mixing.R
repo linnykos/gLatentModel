@@ -1,6 +1,6 @@
 source("../main/simulation_header.R")
 
-trials <- 100
+trials <- 25
 paramMat <- cbind(4, 6, ceiling(exp(seq(log(5), log(500), length.out = 30))), 1)
 colnames(paramMat) <- c("K", "times_dim", "n", "noise")
 
@@ -50,4 +50,4 @@ hclust_res <- simulationGenerator(rule_hclust, paramMat, criterion,
                                   trials, 20)
 sbm_res <- simulationGenerator(rule_sbm, paramMat, criterion,
                                trials, 20)
-save.image("../results/results_standard.RData", safe = F)
+save.image("../results/results_mixing.RData", safe = F)
