@@ -1,6 +1,10 @@
 ---
 title: "Simulation Results (2/13/17)"
 output: pdf_document
+header-includes:
+   - \usepackage{bbm}
+   - \usepackage{bm}
+   - \usepackage{url}
 ---
 
 ```{r setup, include=FALSE}
@@ -9,11 +13,38 @@ knitr::opts_chunk$set(echo = FALSE)
 
 # Model
 
+We assume that our dataset, $\bm{X} \in \mathbb{R}^{n \times d}$ is generated via the following model,
+\begin{equation}\label{eq:model}
+\bm{X} = \bm{Z} \bm{A} + \varepsilon,
+\end{equation}
+
+where $\bm{Z} \in \mathbb{R}^{n \times k}$ represents the ``latent'' data where each sample (row) represents
+the expression of a gene cluster, and $\bm{A} \in \{0,1\}^{k \times d}$ is the assignment matrix
+where each column only has one non-zero entry. That is, we are assuming a hard clustering where every
+gene belongs to only one cluster.
+
+We assume each row of $\bm{Z}$ is drawn iid from $N(0, \bm{\Sigma})$, where we are interested in
+estimated the correlation matrix based on the latent covariance matrix $\bm{\Sigma}$. Also, 
+$\varepsilon \in \mathbb{R}^n$ is drawn iid from $N(0, \sigma^2 \bm{I})$.
+
 # Algorithms
 
-# Simulation Results
+To be filled. 
 
-## Model 1 (Standard) Correctly specified
+\begin{itemize}
+\item Black: clustering based on CORD in \url{https://arxiv.org/pdf/1508.01939.pdf} where we choose the appropriate tuning parameter to achieve $K$ clusters.
+\item Red: spectral clustering method in Section 6 of \url{https://arxiv.org/pdf/1606.05100.pdf} with
+a set $K$.
+\item Green: hierarchical clustering where we use single-linkage clustering and prune the tree at $K$ (which we set beforehand).
+\item Blue: stochastic block model where we first estimate a graph of $d$ nodes based on the significant correlations (using the Fisher Z-transform), and then use spectral clustering on the adjacency matrix
+with a set $K$.
+\end{itemize}
+
+In all methods above, we average the respective columns of $\bm{X}$ to estimate the latent covariance matrix,
+$\bm{\Sigma}$.
+
+
+# Simulation Results
 
 ```{r}
 create_matrix <- function(glatent_res, glatent_sbm_res, hclust_res, sbm_res){
@@ -37,7 +68,7 @@ create_matrix <- function(glatent_res, glatent_sbm_res, hclust_res, sbm_res){
 }
 
 plot_data <- function(res, i_vec, n_vec){
-  par(mfrow = c(1, length(i_vec)), mar = c(5,1.75,4,1))
+  par(mfrow = c(1, length(i_vec)), mar = c(5,1.75,3,1))
   
   for(i in i_vec){
     xlim = c(min(n_vec), max(n_vec))
@@ -47,7 +78,7 @@ plot_data <- function(res, i_vec, n_vec){
                                                             res$sd_list[[x]][i,])})))
   
     plot(NA, xlim = xlim, ylim = ylim, xlab = "n", ylab = "Error",
-         main = res$name.vec[i])
+         main = res$name_vec[[i]])
     
     for(j in 1:4){
       offset <- rnorm(1)
@@ -68,6 +99,10 @@ plot_data <- function(res, i_vec, n_vec){
 ```
 
 
+## Model 1 (Standard) Correctly specified
+
+We have $K=4$, and each cluster has $6$ genes.
+
 ```{r}
 load("../results/results_standard.RData")
 
@@ -76,17 +111,26 @@ res <- create_matrix(glatent_res, glatent_sbm_res, hclust_res, sbm_res)
 
 **Estimation of Latent Covariance Matrix**
 
+
+We show the "Max", "Forbenius", "Spectral", and "L1" errors between the estimated latent covariance
+matrix and the population covariance matrix below, from left to right.
+
+
 ```{r}
 plot_data(res, 1:4, paramMat[,3])
 ```
 
 **Estimation of the Clusterings**
 
+We show the partnership difference and the Jaccard difference in the clustering assignments, on the left and right.
+
 ```{r}
 suppressWarnings(plot_data(res, 6:7, paramMat[,3]))
 ```
 
 ## Model 2 (Fragment: many small clusters) Correctly specified
+
+We have $K=8$, and each cluster has $3$ genes.
 
 ```{r}
 load("../results/results_fragment.RData")
@@ -108,6 +152,10 @@ suppressWarnings(plot_data(res, 6:7, paramMat[,3]))
 
 ## Model 3 (Blockwise: many clusters of different sizes) Correctly specified
 
+We have $K=6$, where the first cluster has $2$ genes, the second cluster has $3$ genes, and so on.
+There are a total of $27$ genes this way.
+
+
 ```{r}
 load("../results/results_blockwise.RData")
 
@@ -125,3 +173,61 @@ plot_data(res, 1:4, paramMat[,2])
 ```{r}
 suppressWarnings(plot_data(res, 6:7, paramMat[,2]))
 ```
+
+
+## Model 4 (Mixed) Misspecified
+
+
+We have $K=4$, and each cluster has $6$ genes. However, we construct the $\bm{A}$ matrix in the following
+way. First set $\bm{A} \in \mathbb{R}^{K \times d}$ to be a $\{0, 0.7\}$ matrix where each column
+only has one non-zero entry. Then, for each column, randomly add $0.3$ to one of the $K$ possible
+columns. Essentially, this means most genes are 70\% in one cluster, 30\% to be in another.
+
+
+```{r}
+load("../results/results_mixing.RData")
+
+res <- create_matrix(glatent_res, glatent_sbm_res, hclust_res, sbm_res)
+```
+
+**Estimation of Latent Covariance Matrix**
+
+```{r}
+plot_data(res, 1:4, paramMat[,3])
+```
+
+**Estimation of the Clusterings**
+
+```{r}
+suppressWarnings(plot_data(res, 6:7, paramMat[,3]))
+```
+
+
+
+## Model 5 (Monotone Transformation) Misspecified
+
+We have $K=4$, and each cluster has $6$ genes. This is the same as Model 1, but instead of 
+\eqref{eq:model}, we instead have
+\[
+\bm{X} = \text{logistic}(\bm{Z} \bm{A}) + \varepsilon, 
+\]
+where $\text{logistic}(\cdot)$ is the logistic function that we apply entry-wise. 
+
+```{r}
+load("../results/results_monotoneTransform.RData")
+
+res <- create_matrix(glatent_res, glatent_sbm_res, hclust_res, sbm_res)
+```
+
+**Estimation of Latent Covariance Matrix**
+
+```{r}
+plot_data(res, 1:4, paramMat[,3])
+```
+
+**Estimation of the Clusterings**
+
+```{r}
+suppressWarnings(plot_data(res, 6:7, paramMat[,3]))
+```
+
