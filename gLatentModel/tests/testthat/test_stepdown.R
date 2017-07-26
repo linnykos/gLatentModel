@@ -15,3 +15,27 @@ test_that("stepdown works", {
   expect_true(is.numeric(res))
   expect_true(all(res %% 1 == 0))
 })
+
+test_that("stepdown finds the right partition", {
+  set.seed(10)
+  d <- 6
+  cov_mat <- matrix(0, d, d)
+  cov_mat[1:(d/2), 1:(d/2)] <- 0.75
+  cov_mat[(d/2+1):d, (d/2+1):d] <- 0.75
+  diag(cov_mat) <- 1
+
+  dat <- MASS::mvrnorm(100, mu = rep(0,d), Sigma = cov_mat)
+
+  combn_mat <- combn(d, 2)
+  g_list <- lapply(1:ncol(combn_mat), function(x){
+    row_difference_closure(combn_mat[1,x], combn_mat[2,x], d)})
+
+  res <- stepdown(dat, g_list)
+  correct_idx <- which(apply(combn_mat, 2, function(x){
+    bool1 <- x[1] <= d/2
+    bool2 <- x[2] <= d/2
+    if(bool1 == bool2) TRUE else FALSE
+  }))
+
+  expect_true(all(sort(res) == sort(correct_idx)))
+})
