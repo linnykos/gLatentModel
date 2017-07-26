@@ -1,14 +1,14 @@
 cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100){
   n <- nrow(dat)
 
-  t0 <- g(translate(dat))
+  sigma_vec <- apply(dat, 2, stats::sd)
+  t0 <- g(translate(dat, sigma_vec = sigma_vec))
 
   t_boot <- rep(NA, trials)
 
   for(i in 1:trials){
     e <- stats::rnorm(n)
-    dat_boot <- diag(e)%*%dat
-    t_boot[i] <- g(translate(dat_boot))
+    t_boot[i] <- g(translate(dat, sigma_vec = sigma_vec, noise_vec = e))
   }
 
   pval <- length(which(t_boot >= t0))/trials
@@ -16,9 +16,11 @@ cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100){
   list(pval = pval, quant = quantile(t_boot, 1-alpha), t0 = t0)
 }
 
-cor_vec <- function(dat){
-  cor_mat <- stats::cor(dat)
-  cor_mat[lower.tri(cor_mat)]
+cor_vec <- function(dat, sigma_vec = rep(1, ncol(dat)), noise_vec = rep(1, nrow(dat))){
+  n <- nrow(dat)
+
+  mat <- diag(1/sigma_vec) %*% (t(dat) %*% diag(noise_vec) %*% dat) %*% diag(1/sigma_vec)
+  mat[lower.tri(mat)]/n
 }
 
 row_difference_closure <- function(i,j,d){

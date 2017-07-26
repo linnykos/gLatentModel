@@ -68,12 +68,14 @@ test_that("cck has sensible p-values", {
   cov_mat[c(2:3), c(1,4)] <- 0.5;  cov_mat[c(1,4), c(2:3)] <- 0.5
 
   dat <- MASS::mvrnorm(100, mu = rep(0,4), Sigma = cov_mat)
+  set.seed(10)
   g1 <- row_difference_closure(1,4,4)
   res1 <- cck(dat, g = g1)
 
+  set.seed(10)
   g2 <- row_difference_closure(1,2,4)
   res2 <- cck(dat, g = g2)
 
-  expect_true(res2 < res1)
+  expect_true(res2$pval < res1$pval)
   expect_true(res1$t0 <= res2$t0)
 })
