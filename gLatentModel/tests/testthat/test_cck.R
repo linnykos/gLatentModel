@@ -43,6 +43,16 @@ test_that("cor_vec works", {
   expect_true(length(res) == 5*4/2)
 })
 
+test_that("cor_vec gives the correlation matrix when noise_vec is 1", {
+  set.seed(10)
+  dat <- matrix(rnorm(40), 8, 5)
+  sigma_vec <- apply(dat, 2, stats::sd)
+
+  res <- cor_vec(dat, sigma_vec = sigma_vec)
+  res2 <- stats::cor(dat)
+  res2 <- res2[lower.tri(res2)]*(7/8)
+})
+
 ##########################
 
 ## cck is correct
@@ -79,3 +89,6 @@ test_that("cck has sensible p-values", {
   expect_true(res2$pval < res1$pval)
   expect_true(res1$t0 <= res2$t0)
 })
+
+########################
+

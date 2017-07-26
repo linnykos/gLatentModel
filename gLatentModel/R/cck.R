@@ -18,6 +18,7 @@ cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100){
 
 cor_vec <- function(dat, sigma_vec = rep(1, ncol(dat)), noise_vec = rep(1, nrow(dat))){
   n <- nrow(dat)
+  dat <- scale(dat, scale = F)
 
   mat <- diag(1/sigma_vec) %*% (t(dat) %*% diag(noise_vec) %*% dat) %*% diag(1/sigma_vec)
   mat[lower.tri(mat)]/n
