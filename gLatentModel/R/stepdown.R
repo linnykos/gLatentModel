@@ -1,3 +1,15 @@
+#' Stepdown procedure
+#'
+#' @param dat nxd numeric matrix
+#' @param g_list a list of function that takes in (d choose 2) numbers
+#' @param translate translates each sample of length d into some other vector
+#' @param alpha significance value, between 0 and 1
+#' @param trials positive integer of bootstrap trials
+#' @param cores number of cores to parallelize computation over
+#'
+#' @return a set of indices of integers between 1 to \code{length(g_list)}
+#' to denote all the hypothesis that passed
+#' @export
 stepdown <- function(dat, g_list, translate = cor_vec, alpha = 0.05, trials = 100,
                      cores = 2){
   n <- nrow(dat); len <- length(g_list)
@@ -38,6 +50,13 @@ stepdown <- function(dat, g_list, translate = cor_vec, alpha = 0.05, trials = 10
   which(idx_in)
 }
 
+#' Returns the number of connected components from a list of edges
+#'
+#' @param d number of nodes
+#' @param edges 2x(number of edges) matrix of integers
+#'
+#' @return list of the connected components
+#' @export
 connected_components <- function(d, edges){
   stopifnot(nrow(edges) == 2)
   stopifnot(all(as.numeric(edges) %% 1 == 0), all(as.numeric(edges) <= d),

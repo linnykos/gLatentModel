@@ -7,11 +7,9 @@ cache: packages
 
 r_binary_packages:
     - MASS
-    - plyr
-    - huge
-    - cord
-    - combinat
-    - psych
+    - foreach
+    - doMC
+    - igraph
 
 after_success:
   - Rscript -e 'library(covr); codecov()'

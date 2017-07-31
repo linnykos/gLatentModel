@@ -1,3 +1,14 @@
+#' Applys CCK to the correlations for a function g
+#'
+#' @param dat nxd numeric matrix
+#' @param g function that takes in (d choose 2) numbers
+#' @param translate translates each sample of length d into some other vector
+#' @param alpha significance value, between 0 and 1
+#' @param trials positive integer of bootstrap trials
+#' @param cores number of cores to parallelize computation over
+#'
+#' @return
+#' @export
 cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100,
                 cores = 2){
   n <- nrow(dat)
@@ -24,6 +35,18 @@ cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100,
   list(pval = pval, quant = stats::quantile(t_boot, 1-alpha), t0 = t0)
 }
 
+#' Converts the data into correlations
+#'
+#' Allows \code{noise_vec} which multiplies each sample with a certain amount of
+#' noise. Also requires the estimated standard deviations (marginal) in
+#' \code{sigma_vec}.
+#'
+#' @param dat nxd numeric matrix
+#' @param sigma_vec length d numeric vector
+#' @param noise_vec length d numeric vector
+#'
+#' @return a vector of length (d choose 2).
+#' @export
 cor_vec <- function(dat, sigma_vec = rep(1, ncol(dat)), noise_vec = rep(1, nrow(dat))){
   n <- nrow(dat)
   dat <- scale(dat, scale = F)
@@ -32,6 +55,14 @@ cor_vec <- function(dat, sigma_vec = rep(1, ncol(dat)), noise_vec = rep(1, nrow(
   mat[lower.tri(mat)]/n
 }
 
+#' Generate function to evaluate difference between two rows
+#'
+#' @param i integer between 1 and d
+#' @param j integer between 1 and d
+#' @param d positive ingeter
+#'
+#' @return a function
+#' @export
 row_difference_closure <- function(i,j,d){
   stopifnot(i <= d, j <= d, i >= 1, j >= 1, i%%1 == 0, j%%1 == 0)
   tmp <- matrix(0, d, d)
