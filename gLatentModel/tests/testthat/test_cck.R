@@ -30,6 +30,37 @@ test_that("row_difference_closure gives the right value", {
   expect_true(res == 10)
 })
 
+test_that("row_difference_closure gives a function that does the right calculation",{
+  set.seed(10)
+  n <- 100; d <- 4
+  cov_mat <- diag(d)
+  cov_mat[c(2:3), c(1,4)] <- 0.5;  cov_mat[c(1,4), c(2:3)] <- 0.5
+  dat <- MASS::mvrnorm(n, mu = rep(0,4), Sigma = cov_mat)
+
+  e <- stats::rnorm(n)
+  sigma_vec <- apply(dat, 2, stats::sd)
+  psi <- cor_vec(dat, sigma_vec = sigma_vec)
+  psi_boot <- cor_vec(dat, sigma_vec = sigma_vec, noise_vec = e)
+  g <- row_difference_closure(1,2,d)
+  res <- g(psi_boot, average_vec = psi*sum(e)/n)
+
+  #manual calculation
+  dat <- scale(dat, scale = F)
+  combn_mat <- combn(d, 2)
+  psi_boot2 <- sapply(1:ncol(combn_mat), function(x){
+    denom <- sigma_vec[combn_mat[1,x]]*sigma_vec[combn_mat[2,x]]
+    val <- sapply(1:n, function(y){
+      (dat[y,combn_mat[1,x]]*dat[y,combn_mat[2,x]]/denom - psi[x])*e[y]
+    })
+    mean(val)
+  })
+  #hard-coded indices
+  diff_vec <- c(psi_boot2[2]-psi_boot2[4], psi_boot2[3]-psi_boot2[5])
+  res2 <- max(abs(diff_vec))
+
+  expect_true(abs(res - res2) <= 1e-5)
+})
+
 ########################
 
 ## cor_vec is correct
@@ -88,6 +119,33 @@ test_that("cck has sensible p-values", {
 
   expect_true(res2$pval < res1$pval)
   expect_true(res1$t0 <= res2$t0)
+})
+
+test_that("cck has the right null distribution", {
+  trials <- 50
+  res_vec <- rep(NA, trials); res_vec2 <- rep(NA, trials)
+  cov_mat <- diag(4)
+  cov_mat[c(2:3), c(1,4)] <- 0.5;  cov_mat[c(1,4), c(2:3)] <- 0.5
+  g1 <- row_difference_closure(1,4,4)
+  g2 <- row_difference_closure(1,2,4)
+
+  for(i in 1:trials){
+    set.seed(i)
+    dat <- MASS::mvrnorm(100, mu = rep(0,4), Sigma = cov_mat)
+    set.seed(10)
+    res_vec[i] <- cck(dat, g = g1, trials = 50)$pval
+  }
+
+  for(i in 1:trials){
+    set.seed(i)
+    dat <- MASS::mvrnorm(100, mu = rep(0,4), Sigma = cov_mat)
+    set.seed(10)
+    res_vec2[i] <- cck(dat, g = g2, trials = 50)$pval
+  }
+
+  expect_true(sum(abs(quantile(res_vec) - seq(0, 1, length.out = 5)))
+              <= sum(abs(quantile(res_vec2) - seq(0, 1, length.out = 5))))
+
 })
 
 ########################
