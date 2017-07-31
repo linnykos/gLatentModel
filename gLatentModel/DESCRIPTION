@@ -10,11 +10,8 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     MASS,
-    plyr,
-    huge,
-    cord,
-    combinat,
-    psych
+    foreach,
+    doMC
 Suggests:
     testthat
 RoxygenNote: 6.0.1
