@@ -11,7 +11,7 @@ cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100){
     t_boot[i] <- g(translate(dat, sigma_vec = sigma_vec, noise_vec = e))
   }
 
-  pval <- length(which(t_boot >= t0))/trials
+  pval <- length(which(n^(1/2)*abs(t_boot-t0) >= n^(1/2)*abs(t0)))/trials
 
   list(pval = pval, quant = quantile(t_boot, 1-alpha), t0 = t0)
 }
