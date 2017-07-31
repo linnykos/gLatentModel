@@ -4,7 +4,8 @@ stepdown <- function(dat, g_list, translate = cor_vec, alpha = 0.05, trials = 10
   doMC::registerDoMC(cores = cores)
 
   sigma_vec <- apply(dat, 2, stats::sd)
-  t0_vec <- sapply(1:len, function(x){g_list[[x]](translate(dat, sigma_vec = sigma_vec))})
+  psi <- translate(dat, sigma_vec = sigma_vec)
+  t0_vec <- sapply(1:len, function(x){g_list[[x]](psi)})
   idx_in <- rep(TRUE, length(g_list))
 
   func <- function(i){
@@ -12,10 +13,10 @@ stepdown <- function(dat, g_list, translate = cor_vec, alpha = 0.05, trials = 10
     e <- stats::rnorm(n)
     t_boot_vec <- sapply(1:len, function(x){
       if(idx_in[x]) {
-        res <- g_list[[x]](translate(dat, sigma_vec = sigma_vec, noise_vec = e))
-        n^(1/2)*abs(res - t0_vec[x])
+        res <- g_list[[x]](translate(dat, sigma_vec = sigma_vec, noise_vec = e),
+                           average_vec = psi*sum(e)/n)
       } else NA})
-    if(all(is.na(t_boot_vec))) return(numeric(0)) else t_boot[i] <- max(t_boot_vec, na.rm = T)
+    if(all(is.na(t_boot_vec))) return(numeric(0)) else t_boot[i] <- n^(1/2)*max(t_boot_vec, na.rm = T)
   }
 
   round <- 1
