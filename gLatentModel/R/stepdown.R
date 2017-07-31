@@ -36,3 +36,16 @@ stepdown <- function(dat, g_list, translate = cor_vec, alpha = 0.05, trials = 10
 
   which(idx_in)
 }
+
+connected_components <- function(d, edges){
+  stopifnot(nrow(edges) == 2)
+  stopifnot(all(as.numeric(edges) %% 1 == 0), all(as.numeric(edges) <= d),
+            all(as.numeric(edges) >= 1))
+  stopifnot(d %% 1 == 0, d > 1)
+
+  g <- igraph::graph.empty(n = d, directed = F)
+  g <- igraph::add_edges(g, edges = edges)
+  res <- igraph::components(g)
+
+  lapply(1:res$no, function(x){which(res$membership == x)})
+}
