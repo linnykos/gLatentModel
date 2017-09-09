@@ -1,3 +1,7 @@
+rm(list=ls())
+devtools::install_github("linnylin92/gLatentModel", ref = "cck",
+                         subdir = "gLatentModel", force = T)
+
 source("../main/simulation_helper.R")
 d <- 40; n <- 100
 
