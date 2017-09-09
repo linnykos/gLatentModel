@@ -8,7 +8,7 @@ clean_matrix <- function(mat){
 }
 
 #fixed design with four clusters
-generate_matrix <- function(n = 500, d = 60, strength = 0){
+generate_matrix <- function(d = 60, strength = 0){
   stopifnot(d %% 4 == 0)
 
   d4 <- d/4

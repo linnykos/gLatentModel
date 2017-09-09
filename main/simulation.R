@@ -1,34 +1,41 @@
-rm(list=ls())
-devtools::install_github("linnylin92/gLatentModel", ref = "cck",
-                         subdir = "gLatentModel", force = T)
+source("../main/simulation_header.R")
 
-source("../main/simulation_helper.R")
-d <- 40; n <- 100
+trials <- 100
+d <- 100
+n_seq <- c(50, 100, 250, 500)
+strength_seq <- c(0, 0.1)
+param_mat <- as.matrix(expand.grid(n_seq, strength_seq))
 
-cov_mat <- generate_matrix(n = n, d = d, strength = 0)
-cov_mat <- clean_matrix(cov_mat)
+rule_closure <- function(d, alpha = 0.05, bootstrap_trials = 200){
+  function(vec){
+    cov_mat <- generate_matrix(d = d, strength = vec[2])
+    cov_mat <- clean_matrix(cov_mat)
 
-# cov_mat_simplified <- matrix(sapply(c(0:3)*d4+1, function(x){
-#   cov_mat[c(0:3)*d4+2,x]
-# }), ncol = 4, nrow = 4)
+    dat <- MASS::mvrnorm(vec[1], mu = rep(0,d), Sigma = cov_mat)
 
-set.seed(10)
-dat <- MASS::mvrnorm(n, mu = rep(0,d), Sigma = cov_mat)
+    ## use cck
+    combn_mat <- combn(d, 2)
+    g_list <- lapply(1:ncol(combn_mat), function(x){
+      gLatentModel::row_difference_closure(combn_mat[1,x], combn_mat[2,x], d)})
+    cck_idx <- gLatentModel::stepdown(dat, g_list, cores = 4, alpha = alpha, trials = bootstrap_trials)
+    cck_res <- gLatentModel::connected_components(d, combn_mat[,cck_idx])
 
-## use cck
-combn_mat <- combn(d, 2)
-g_list <- lapply(1:ncol(combn_mat), function(x){
-  gLatentModel::row_difference_closure(combn_mat[1,x], combn_mat[2,x], d)})
-cck_idx <- gLatentModel::stepdown(dat, g_list, cores = 20, alpha = 0.1, trials = 200)
-cck_res <- gLatentModel::connected_components(d, combn_mat[,cck_idx])
+    mcord_res <- cord::cord(dat)$cluster
+    mcord_res <- lapply(unique(mcord_res), function(x){which(mcord_res == x)})
 
-## use mcord
-mcord_res <- cord::cord(dat)
+    dd <- as.dist((1 - cor(dat))/2)
+    obj <- hclust(dd, method = "single")
+    hier_res <- cutree(obj, 4)
+    hier_res <- lapply(unique(hier_res), function(x){which(hier_res == x)})
 
-## use hierarchical clust
-dd <- as.dist((1 - cor(dat))/2)
-obj <- hclust(dd, method = "single")
-hier_res <- cutree(obj, 4)
+    list(cck_res = cck_res, mcord_res = mcord_res, hier_res = hier_res)
+  }
+}
+
+rule <- rule_closure(d)
+criterion <- function(x, vec){x}
+
+res <- simulationGenerator(rule, param_mat, criterion, trials, cores = NA)
 
 save.image("../main/results.RData")
 
