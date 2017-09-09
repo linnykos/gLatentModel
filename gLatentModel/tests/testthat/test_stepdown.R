@@ -40,6 +40,31 @@ test_that("stepdown finds the right partition", {
   expect_true(all(sort(res) == sort(correct_idx)))
 })
 
+test_that("stepdown finds coarser partitions when alpha is larger", {
+  set.seed(10)
+  d <- 4
+  cov_mat <- matrix(0, d, d)
+  cov_mat[1:(d/2), 1:(d/2)] <- 0.75
+  cov_mat[(d/2+1):d, (d/2+1):d] <- 0.75
+  diag(cov_mat) <- 1
+  dat <- MASS::mvrnorm(50, mu = rep(0,d), Sigma = cov_mat)
+
+  combn_mat <- combn(d, 2)
+  g_list <- lapply(1:ncol(combn_mat), function(x){
+    gLatentModel::row_difference_closure(combn_mat[1,x], combn_mat[2,x], d)})
+
+  res <- stepdown(dat, g_list, alpha = 0.2)
+  res2 <- stepdown(dat, g_list, alpha = 0.001)
+  res3 <- stepdown(dat, g_list, alpha = 0.8)
+
+  cck_res <- gLatentModel::connected_components(d, combn_mat[,res])
+  cck_res2 <- gLatentModel::connected_components(d, combn_mat[,res2])
+  cck_res3 <- gLatentModel::connected_components(d, combn_mat[,res3])
+
+  expect_true(length(cck_res2) <= length(cck_res))
+  expect_true(length(cck_res) <= length(cck_res3))
+})
+
 ############
 
 ## connected_components is correct
