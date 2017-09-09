@@ -19,7 +19,7 @@ dat <- MASS::mvrnorm(n, mu = rep(0,d), Sigma = cov_mat)
 combn_mat <- combn(d, 2)
 g_list <- lapply(1:ncol(combn_mat), function(x){
   gLatentModel::row_difference_closure(combn_mat[1,x], combn_mat[2,x], d)})
-cck_idx <- gLatentModel::stepdown(dat, g_list, cores = 4)
+cck_idx <- gLatentModel::stepdown(dat, g_list, cores = 4, alpha = 0.01)
 cck_res <- gLatentModel::connected_components(d, combn_mat[,cck_idx])
 
 ## use mcord
