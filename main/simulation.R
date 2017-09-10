@@ -1,9 +1,9 @@
 source("../main/simulation_header.R")
 
 trials <- 100
-d <- 100
-n_seq <- c(50, 100, 250, 500)
-strength_seq <- c(0, 0.1)
+d <- 40
+n_seq <- c(10, 40, 100, 250)
+strength_seq <- c(0, 0.3, 0.6, 0.9)
 param_mat <- as.matrix(expand.grid(n_seq, strength_seq))
 
 rule_closure <- function(d, alpha = 0.05, bootstrap_trials = 200){
