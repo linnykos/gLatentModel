@@ -1,4 +1,6 @@
 .convert_list_to_vector <- function(list){
+  stopifnot(is.list(list))
+
   n <- max(sapply(list, max))
   vec <- rep(0, n)
   for(i in 1:length(list)){
