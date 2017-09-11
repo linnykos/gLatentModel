@@ -14,6 +14,12 @@ test_that(".convert_list_to_vector works", {
   expect_true(all(res == rep(1:4, times = 10)))
 })
 
+test_that(".convert_list_to_vector works when the list is of length 1", {
+  lis <- list(c(1:10))
+  res <- .convert_list_to_vector(lis)
+  expect_true(all(res == rep(1,10)))
+})
+
 ## .convert_vector_to_list is correct
 
 test_that(".convert_vector_to_list works", {

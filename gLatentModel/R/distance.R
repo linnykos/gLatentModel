@@ -18,6 +18,8 @@ partition_distance <- function(partition1, partition2, method = "variation",
   .check_partition(partition1); .check_partition(partition2)
 
   if(method == "variation") {.partition_variation(partition1, partition2)
+  } else if(method == "hamming") {
+    .partition_hamming(partition1, partition2)
   } else if(method == "hamming_covariance") {
     .partition_hamming_covariance(partition1, partition2, covariance)
   } else {
@@ -73,6 +75,18 @@ partition_distance <- function(partition1, partition2, method = "variation",
   })
 
   sum(vec)
+}
+
+.partition_hamming <- function(partition1, partition2){
+  n <- length(partition1)
+  combn_mat <- utils::combn(n, 2)
+
+  vec <- apply(combn_mat, 2, function(x){
+    bool <- .hamming_check(x, partition1, partition2)
+    if(bool) 0 else 1
+  })
+
+  sum(vec)/ncol(combn_mat)
 }
 
 #' Hamming partition distance with respect to a covariance matrix
