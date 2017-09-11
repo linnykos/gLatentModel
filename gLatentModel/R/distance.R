@@ -77,6 +77,16 @@ partition_distance <- function(partition1, partition2, method = "variation",
   sum(vec)
 }
 
+#' Partition distance with hamming distance
+#'
+#' Averages the hamming distance across different pairs using
+#' \code{.hamming_check}.
+#'
+#' @param partition1 a partition vector
+#' @param partition2 a partition vector
+#'
+#' @return a numeric
+#' @export
 .partition_hamming <- function(partition1, partition2){
   n <- length(partition1)
   combn_mat <- utils::combn(n, 2)
@@ -92,7 +102,8 @@ partition_distance <- function(partition1, partition2, method = "variation",
 #' Hamming partition distance with respect to a covariance matrix
 #'
 #' This partition first calculates the hamming distance between every
-#' pair of samples \code{n}.If the hamming distance is \code{TRUE}, then
+#' pair of samples \code{n}. If the hamming distance is \code{TRUE} (using
+#' \code{.hamming_check}), then
 #' a distance of \code{0} is assigned to this pair. Otherwise, the
 #' L2 distance squared of the distance between the respective rows of the
 #' covariance matrix is assigned to this pair. (Note: each vector does not
