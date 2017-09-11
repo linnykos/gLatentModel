@@ -67,3 +67,42 @@ test_that(".partition_variation is smaller for smaller variation", {
 
   expect_true(res1 >= res2)
 })
+
+#########
+
+## .hamming_check is correct
+
+test_that(".hamming_check works", {
+  set.seed(10)
+  pair <- c(1,10)
+  partition1 <- sample(1:4, 40, replace = T)
+  partition2 <- sample(1:4, 40, replace = T)
+
+  res <- .hamming_check(pair, partition1, partition2)
+
+  expect_true(is.logical(res))
+})
+
+test_that(".hamming_check returns TRUE if pair are same partitions", {
+  pair <- c(1,10)
+  partition1 <- rep(1:4, times = 10)
+  partition2 <- rep(4:1, times = 10)
+  res <- .hamming_check(pair, partition1, partition2)
+
+  expect_true(res)
+})
+
+test_that(".hamming_check returns FALSE if pair are different partitions", {
+  pair <- c(1,10)
+  partition1 <- rep(1:4, times = 10)
+  partition2 <- rep(4:1, times = 10)
+
+  partition2[10] <- (partition2[10]+1)%%4
+  if(partition2[10] == 0) partition2[10] <- 4
+
+  res <- .hamming_check(pair, partition1, partition2)
+
+  expect_true(!res)
+})
+
+
