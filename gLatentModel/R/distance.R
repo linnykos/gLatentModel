@@ -29,6 +29,7 @@ partition_distance <- function(partition1, partition2, method = "variation",
   grid <- expand.grid(1:num1, 1:num2)
 
   vec <- apply(grid, 1, function(x){
+    if(tab[x[1],x[2]] == 0) return(0)
     -tab[x[1],x[2]]*(log(tab[x[1],x[2]] / vec1[x[1]]) +
                         log(tab[x[1],x[2]] / vec2[x[2]]))
   })
