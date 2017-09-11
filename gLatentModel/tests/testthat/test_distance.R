@@ -105,4 +105,66 @@ test_that(".hamming_check returns FALSE if pair are different partitions", {
   expect_true(!res)
 })
 
+##########
 
+## .l2vec is correct
+
+test_that(".l2vec works", {
+  res <- .l2vec(1:5)
+  expect_true(is.numeric(res))
+})
+
+############
+
+## .partition_hamming_covariance is correct
+
+test_that(".partition_hamming_covariance works", {
+  cov_mat <- diag(4)
+  cov_mat[c(2:3), c(1,4)] <- 0.5;  cov_mat[c(1,4), c(2:3)] <- 0.5
+
+  partition1 <- c(1,1,2,2)
+  partition2 <- c(1,2,2,1)
+
+  res <- .partition_hamming_covariance(partition1, partition2, cov_mat)
+
+  expect_true(is.numeric(res))
+})
+
+test_that(".partition_hamming_covariance returns 0 if partitions are the same", {
+  cov_mat <- diag(4)
+  cov_mat[c(2:3), c(1,4)] <- 0.5;  cov_mat[c(1,4), c(2:3)] <- 0.5
+
+  partition1 <- rep(1:4, times = 10)
+  partition2 <- rep(4:1, times = 10)
+
+  res <- .partition_hamming_covariance(partition1, partition2, cov_mat)
+
+  expect_true(res == 0)
+})
+
+test_that(".partition_hamming_covariance scales correctly", {
+  cov_mat <- diag(4)
+  cov_mat[c(2:3), c(1,4)] <- 0.5;  cov_mat[c(1,4), c(2:3)] <- 0.5
+
+  cov_mat2 <- cov_mat*5
+
+  partition1 <- c(1,1,2,2)
+  partition2 <- c(1,2,2,1)
+
+  res1 <- .partition_hamming_covariance(partition1, partition2, cov_mat)
+  res2 <- .partition_hamming_covariance(partition1, partition2, cov_mat2)
+
+  expect_true(res2 > res1)
+})
+
+test_that(".partition_hamming_covariance can handle uneven partitions", {
+  cov_mat <- diag(4)
+  cov_mat[c(2:3), c(1,4)] <- 0.5;  cov_mat[c(1,4), c(2:3)] <- 0.5
+
+  partition1 <- rep(1,4)
+  partition2 <- c(1,2,2,1)
+
+  res <- .partition_hamming_covariance(partition1, partition2, cov_mat)
+
+  expect_true(is.numeric(res))
+})

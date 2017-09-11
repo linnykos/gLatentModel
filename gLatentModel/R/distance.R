@@ -38,12 +38,14 @@ partition_distance <- function(partition1, partition2, method = "variation",
 }
 
 .partition_hamming_covariance <- function(partition1, partition2, covariance){
+  stopifnot(is.matrix(covariance), all(dim(covariance) > 2), nrow(covariance) == ncol(covariance))
+
   n <- length(partition1)
   combn_mat <- utils::combn(n, 2)
 
   vec <- apply(combn_mat, 2, function(x){
     bool <- .hamming_check(x, partition1, partition2)
-    if(bool) 0 else .l2vec(covariance[,x[1]] - covariance[,x[2]])^2
+    if(bool) 0 else .l2vec(covariance[-x,x[1]] - covariance[-x,x[2]])^2
   })
 
   sqrt(sum(vec))
