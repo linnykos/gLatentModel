@@ -16,7 +16,7 @@ for(i in 1:trials){
 
   dat <- MASS::mvrnorm(500, mu = rep(0,16), Sigma = cov_mat)
   g <- gLatentModel::row_difference_closure(1,2,16)
-  vec[i] <- gLatentModel::cck(dat, g = g, trials = 200)$pval
+  vec[i] <- gLatentModel::cck(dat, g = g, trials = 200, cores = 20)$pval
 }
 
 save.image("null_hypothesis.RData")
