@@ -12,8 +12,9 @@ partition_distance <- function(partition1, partition2, method = "variation",
 }
 
 .check_partition <- function(vec){
+  stopifnot(is.numeric(vec), !is.list(vec), !is.matrix(vec), !is.factor(vec))
   n <- max(vec)
-  stopifnot(all(vec %% 1) == 0, all(vec > 0))
+  stopifnot(all(vec %% 1 == 0), all(vec > 0))
   stopifnot(all(1:n %in% vec))
 
   TRUE
