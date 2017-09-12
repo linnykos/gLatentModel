@@ -52,6 +52,7 @@ test_that("row_difference_closure gives a function that does the right calculati
   cov_mat <- diag(d)
   cov_mat[c(2:3), c(1,4)] <- 0.5;  cov_mat[c(1,4), c(2:3)] <- 0.5
   dat <- MASS::mvrnorm(n, mu = rep(0,4), Sigma = cov_mat)
+  dat <- scale(dat, scale = F)
 
   e <- stats::rnorm(n)
   sigma_vec <- apply(dat, 2, stats::sd)
@@ -103,6 +104,8 @@ test_that("cor_vec gives the correlation matrix when noise_vec is 1", {
 test_that("cor_vec does the calculation correctly with noise_vec", {
   set.seed(10)
   dat <- matrix(rnorm(40), 8, 5)
+  dat <- scale(dat, scale = F)
+
   sigma_vec <- apply(dat, 2, stats::sd)
   e <- rnorm(8)
   res <- cor_vec(dat, sigma_vec = sigma_vec, noise = e)
@@ -112,7 +115,7 @@ test_that("cor_vec does the calculation correctly with noise_vec", {
     mean(dat[,x[1]]*dat[,x[2]]*e)/(sigma_vec[x[1]]*sigma_vec[x[2]])
   })
 
-  expect_true(all(sort(res) == sort(vec)))
+  expect_true(sum(abs(sort(res) - sort(vec))) < 1e-6)
 })
 
 ##########################
