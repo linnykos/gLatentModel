@@ -22,7 +22,7 @@ stepdown(dat, g_list, translate = cor_vec, alpha = 0.05, trials = 100,
 }
 \value{
 a set of indices of integers between 1 to \code{length(g_list)}
-to denote all the hypothesis that passed
+to denote all the hypothesis that passed (i.e., failed to reject the null)
 }
 \description{
 Stepdown procedure
