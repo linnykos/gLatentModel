@@ -1,13 +1,13 @@
 source("../main/simulation_header.R")
 
-trials <- 100
-d <- 40
-n_seq <- c(10, 40, 100, 250)
+trials <- 50
+d <- 20
+n_seq <- c(10, 20, 50, 200)
 strength_seq <- c(0, 0.3, 0.6, 0.9)
 param_mat <- as.matrix(expand.grid(n_seq, strength_seq))
 cores <- 20
 
-rule_closure <- function(d, bootstrap_trials = 200){
+rule_closure <- function(d, bootstrap_trials = 100){
   function(vec){
     cov_mat <- generate_matrix(d = d, strength = vec[2])
     cov_mat <- clean_matrix(cov_mat)
