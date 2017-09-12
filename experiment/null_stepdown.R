@@ -1,6 +1,6 @@
 source("../main/simulation_header.R")
 
-trials <- 1000; d <- 16; n <- 500
+trials <- 500; d <- 16; n <- 500
 res <- vector("list", trials)
 
 cov_mat <- matrix(.2, d, d)
