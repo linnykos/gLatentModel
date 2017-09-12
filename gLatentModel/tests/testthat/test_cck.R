@@ -84,6 +84,21 @@ test_that("cor_vec gives the correlation matrix when noise_vec is 1", {
   res2 <- res2[lower.tri(res2)]*(7/8)
 })
 
+test_that("cor_vec does the calculation correctly with noise_vec", {
+  set.seed(10)
+  dat <- matrix(rnorm(40), 8, 5)
+  sigma_vec <- apply(dat, 2, stats::sd)
+  e <- rnorm(8)
+  res <- cor_vec(dat, sigma_vec = sigma_vec, noise = e)
+
+  combn_mat <- combn(5, 2)
+  vec <- apply(combn_mat, 2, function(x){
+    mean(dat[,x[1]]*dat[,x[2]]*e)/(sigma_vec[x[1]]*sigma_vec[x[2]])
+  })
+
+  expect_true(all(sort(res) == sort(vec)))
+})
+
 ##########################
 
 ## cck is correct
