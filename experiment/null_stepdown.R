@@ -17,7 +17,7 @@ for(i in 1:trials){
   g_list <- lapply(1:ncol(combn_mat), function(x){
     row_difference_closure(combn_mat[1,x], combn_mat[2,x], d)})
 
-  res[[i]] <- stepdown(dat, g_list)
+  res[[i]] <- stepdown(dat, g_list, cores = 20)
 }
 
 percentage <- length(unlist(res))/(d*(d-1)/2*trials)
