@@ -1,6 +1,6 @@
 source("../main/simulation_header.R")
 
-trials <- 1000
+trials <- 100
 vec <- rep(NA, trials)
 
 cov_mat <- diag(4)
