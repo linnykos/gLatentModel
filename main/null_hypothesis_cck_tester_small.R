@@ -4,9 +4,9 @@ trials <- 100
 vec <- rep(NA, trials)
 
 cov_mat <- diag(4)
-cov_mat[c(2:3), c(1,4)] <- 0.5;  cov_mat[c(1,4), c(2:3)] <- 0.5
+#cov_mat[c(2:3), c(1,4)] <- 0.5;  cov_mat[c(1,4), c(2:3)] <- 0.5
 
-cov_mat <- clean_matrix(cov_mat)
+#cov_mat <- clean_matrix(cov_mat)
 
 for(i in 1:trials){
   set.seed(10*i)
