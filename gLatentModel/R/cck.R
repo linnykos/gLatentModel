@@ -22,8 +22,7 @@ cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100,
 
   func <- function(i){
     e <- stats::rnorm(n)
-    g(translate(dat, sigma_vec = sigma_vec, noise_vec = e),
-      average_vec = psi*sum(e)/n)
+    g(translate(dat, sigma_vec = sigma_vec, noise_vec = e))
   }
 
   i <- 1 #debugging purposes
