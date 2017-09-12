@@ -13,22 +13,29 @@
 stepdown <- function(dat, g_list, translate = cor_vec, alpha = 0.05, trials = 100,
                      cores = 2){
   n <- nrow(dat); len <- length(g_list)
+  dat <- scale(dat, scale = F)
   doMC::registerDoMC(cores = cores)
 
   sigma_vec <- apply(dat, 2, stats::sd)
   psi <- translate(dat, sigma_vec = sigma_vec)
-  t0_vec <- sapply(1:len, function(x){g_list[[x]](psi)})
+  theta_list <- lapply(1:len, function(x){g_list[[x]](psi)})
+  t0_vec <- sapply(theta_list, function(x){max(abs(x))})
   idx_in <- rep(TRUE, length(g_list))
 
   func <- function(i){
     set.seed(round*10*i)
-    e <- stats::rnorm(n)
-    t_boot_vec <- sapply(1:len, function(x){
+    idx <- sample(1:n, n, replace = T)
+    dat_tmp <- dat[idx,]
+    dat_tmp <- scale(dat_tmp, scale = F)
+    sigma_tmp <- apply(dat_tmp, 2, stats::sd)
+
+    t_boot <- sapply(1:len, function(x){
       if(idx_in[x]) {
-        res <- g_list[[x]](translate(dat, sigma_vec = sigma_vec, noise_vec = e),
-                           average_vec = psi*sum(e)/n)
+        theta_boot <- g_list[[x]](translate(dat_tmp, sigma_vec = sigma_tmp))
+        max(abs(theta_boot - theta_list[[x]]))
       } else NA})
-    if(all(is.na(t_boot_vec))) return(numeric(0)) else t_boot[i] <- n^(1/2)*max(t_boot_vec, na.rm = T)
+
+    if(all(is.na(t_boot))) return(numeric(0)) else n^(1/2)*max(t_boot, na.rm = T)
   }
 
   round <- 1

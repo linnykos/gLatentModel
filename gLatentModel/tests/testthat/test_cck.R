@@ -12,9 +12,8 @@ test_that("row_difference_closure works", {
   g <- row_difference_closure(1,2,d)
   res <- g(vec)
 
-  expect_true(length(res) == 1)
-  expect_true(is.numeric(res))
-  expect_true(res == 4)
+  expect_true(length(res) == d-2)
+  expect_true(all(res == 4))
 })
 
 test_that("row_difference_closure gives the right value", {
@@ -27,7 +26,7 @@ test_that("row_difference_closure gives the right value", {
   g <- row_difference_closure(2,5,d)
   res <- g(vec)
 
-  expect_true(res == 10)
+  expect_true(max(abs(res)) == 10)
 })
 
 test_that("row_difference_closure gives the right value on more complicated example", {
@@ -43,7 +42,7 @@ test_that("row_difference_closure gives the right value on more complicated exam
   g <- row_difference_closure(1,2,16)
   res <- g(vec)
 
-  expect_true(res < 1e-6)
+  expect_true(max(abs(res)) < 1e-6)
 })
 
 test_that("row_difference_closure gives a function that does the right calculation",{
@@ -59,7 +58,7 @@ test_that("row_difference_closure gives a function that does the right calculati
   psi <- cor_vec(dat, sigma_vec = sigma_vec)
   psi_boot <- cor_vec(dat, sigma_vec = sigma_vec, noise_vec = e)
   g <- row_difference_closure(1,2,d)
-  res <- g(psi_boot, average_vec = psi*sum(e)/n)
+  res <- max(abs(g(psi_boot, average_vec = psi*sum(e)/n)))
 
   #manual calculation
   dat <- scale(dat, scale = F)
