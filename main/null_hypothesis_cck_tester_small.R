@@ -3,11 +3,14 @@ source("../main/simulation_header.R")
 trials <- 1000
 vec <- rep(NA, trials)
 
+cov_mat <- diag(4)
+cov_mat[c(2:3), c(1,4)] <- 0.5;  cov_mat[c(1,4), c(2:3)] <- 0.5
+
 for(i in 1:trials){
   set.seed(10*i)
   if(i %% floor(trials/10) == 0) cat('*')
 
-  dat <- MASS::mvrnorm(100, mu = rep(0,4), Sigma = diag(4))
+  dat <- MASS::mvrnorm(100, mu = rep(0,4), Sigma = cov_mat)
   g <- gLatentModel::row_difference_closure(1,4,4)
   vec[i] <- gLatentModel::cck(dat, g = g, trials = 200, cores = 20)$pval
 }
