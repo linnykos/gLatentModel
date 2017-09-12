@@ -12,6 +12,7 @@ cov_mat[,13:16] <- 0.75
 cov_mat <- clean_matrix(cov_mat)
 
 for(i in 1:trials){
+  set.seed(10*i)
   if(i %% floor(trials/10) == 0) cat('*')
 
   dat <- MASS::mvrnorm(1000, mu = rep(0,16), Sigma = cov_mat)
@@ -20,3 +21,6 @@ for(i in 1:trials){
 }
 
 save.image("null_hypothesis.RData")
+
+# plot(sort(vec), seq(0, 1, length.out = length(vec)), asp = T)
+# lines(c(0,1),c(0,1), lwd = 2, col = "red")
