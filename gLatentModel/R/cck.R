@@ -16,9 +16,8 @@ cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100,
 
   sigma_vec <- apply(dat, 2, stats::sd)
   psi <- translate(dat, sigma_vec = sigma_vec)
-  t0 <- g(psi)
-
-  t_boot <- rep(NA, trials)
+  theta <- g(psi)
+  t0 <- max(abs(theta))
 
   func <- function(i){
     e <- stats::rnorm(n)
@@ -26,10 +25,13 @@ cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100,
   }
 
   i <- 1 #debugging purposes
-  t_boot <- as.numeric(foreach::"%dopar%"(foreach::foreach(i = 1:trials),
-                                          func(i)))
+  theta_boot <- foreach::"%dopar%"(foreach::foreach(i = 1:trials),
+                                          func(i))
+  t_boot <- sapply(theta_boot, function(x){
+    max(abs(x - theta))
+  })
 
-  pval <- length(which(n^(1/2)*abs(t_boot - t0) >= n^(1/2)*abs(t0)))/trials
+  pval <- length(which(n^(1/2)*t_boot >= n^(1/2)*t0))/trials
 
   list(pval = pval, quant = stats::quantile(t_boot, 1-alpha), t0 = t0)
 }
@@ -75,6 +77,6 @@ row_difference_closure <- function(i,j,d){
 
   function(vec, average_vec = rep(0,length(vec))){
     new_vec <- vec - average_vec
-    max(abs(new_vec[idx1] - new_vec[idx2]))
+    abs(new_vec[idx1] - new_vec[idx2])
   }
 }
