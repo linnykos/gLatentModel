@@ -30,7 +30,7 @@ cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100,
   t_boot <- as.numeric(foreach::"%dopar%"(foreach::foreach(i = 1:trials),
                                           func(i)))
 
-  pval <- length(which(n^(1/2)*abs(t_boot) >= n^(1/2)*abs(t0)))/trials
+  pval <- length(which(n^(1/2)*abs(t_boot - t0) >= n^(1/2)*abs(t0)))/trials
 
   list(pval = pval, quant = stats::quantile(t_boot, 1-alpha), t0 = t0)
 }
