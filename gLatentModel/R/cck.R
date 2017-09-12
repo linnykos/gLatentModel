@@ -12,25 +12,22 @@
 cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100,
                 cores = 2){
   n <- nrow(dat)
-  #dat <- scale(dat, scale = F)
+  dat <- scale(dat, scale = F)
   doMC::registerDoMC(cores = cores)
 
   sigma_vec <- apply(dat, 2, stats::sd)
   psi <- translate(dat, sigma_vec = sigma_vec)
-  theta <- g(psi)
-  t0 <- max(abs(theta))
+  t0 <- max(abs(g(psi)))
 
   func <- function(i){
     e <- stats::rnorm(n)
-    g(translate(dat, sigma_vec = sigma_vec, noise_vec = e))
+    g(translate(dat, sigma_vec = sigma_vec, noise_vec = e),
+      average_vec = psi*sum(e)/n)
   }
 
   i <- 1 #debugging purposes
-  theta_boot <- foreach::"%dopar%"(foreach::foreach(i = 1:trials),
-                                          func(i))
-  t_boot <- sapply(theta_boot, function(x){
-    max(abs(x - theta))
-  })
+  t_boot <- as.numeric(foreach::"%dopar%"(foreach::foreach(i = 1:trials),
+                                          func(i)))
 
   pval <- length(which(n^(1/2)*t_boot >= n^(1/2)*t0))/trials
 
@@ -51,7 +48,6 @@ cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100,
 #' @export
 cor_vec <- function(dat, sigma_vec = rep(1, ncol(dat)), noise_vec = rep(1, nrow(dat))){
   n <- nrow(dat)
-  #dat <- scale(dat, scale = F)
 
   mat <- diag(1/sigma_vec) %*% (t(dat) %*% diag(noise_vec) %*% dat) %*% diag(1/sigma_vec)
   mat[lower.tri(mat)]/n
@@ -78,6 +74,6 @@ row_difference_closure <- function(i,j,d){
 
   function(vec, average_vec = rep(0,length(vec))){
     new_vec <- vec - average_vec
-    abs(new_vec[idx1] - new_vec[idx2])
+    max(abs(new_vec[idx1] - new_vec[idx2]))
   }
 }
