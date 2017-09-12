@@ -13,7 +13,7 @@ for(i in 1:500){
 
 cov_mat <- diag(4)
 cov_mat[c(2:3), c(1,4)] <- 0.5;  cov_mat[c(1,4), c(2:3)] <- 0.5
-mean_vec <- c(1:4)
+mean_vec <- rep(0,4) #c(1:4)
 
 trials <- 1000
 vec <- rep(NA, trials)
@@ -36,7 +36,7 @@ hist(vec)
 trials <- 1000; n <- 500
 cov_mat <- diag(4)
 cov_mat[c(2:3), c(1,4)] <- 0.5;  cov_mat[c(1,4), c(2:3)] <- 0.5
-mean_vec <- c(1:4)
+mean_vec <- rep(0,4) #c(1:4)
 
 set.seed(1)
 dat <- MASS::mvrnorm(n, mu = mean_vec, Sigma = cov_mat)
@@ -44,19 +44,24 @@ g <- row_difference_closure(1,4,4)
 dat <- scale(dat, scale = F)
 sigma_vec <- apply(dat, 2, stats::sd)
 psi <- cor_vec(dat, sigma_vec = sigma_vec)
-t0 <- max(abs(g(psi)))
+theta <- g(psi)
+t0 <- max(abs(theta))
 
 doMC::registerDoMC(cores = 2)
 
 func <- function(i){
-  e <- stats::rnorm(n)
-  g(cor_vec(dat, sigma_vec = sigma_vec, noise_vec = e),
-    average_vec = psi*sum(e)/n)
+  idx <- sample(1:n, n, replace = T)
+  dat_tmp <- dat[idx,]
+  dat_tmp <- scale(dat_tmp, scale = F)
+  sigma_tmp <- apply(dat_tmp, 2, stats::sd)
+  psi_tmp <- cor_vec(dat_tmp, sigma_vec = sigma_tmp)
+  g(psi_tmp)
 }
 
 i <- 1 #debugging purposes
-t_boot <- as.numeric(foreach::"%dopar%"(foreach::foreach(i = 1:trials),
-                                        func(i)))
+theta_boot <- foreach::"%dopar%"(foreach::foreach(i = 1:trials),
+                                        func(i))
+t_boot <- sapply(theta_boot, function(x){max(abs(x - theta))})
 hist(t_boot)
 
 ####################

@@ -20,9 +20,12 @@ cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100,
   t0 <- max(abs(g(psi)))
 
   func <- function(i){
-    e <- stats::rnorm(n)
-    g(translate(dat, sigma_vec = sigma_vec, noise_vec = e),
-      average_vec = psi*sum(e)/n)
+    idx <- sample(1:n, n, replace = T)
+    dat_tmp <- dat[idx,]
+    dat_tmp <- scale(dat_tmp, scale = F)
+    sigma_tmp <- apply(dat_tmp, 2, stats::sd)
+    psi_tmp <- cor_vec(dat_tmp, sigma_vec = sigma_tmp)
+    g(psi_tmp)
   }
 
   i <- 1 #debugging purposes
@@ -74,6 +77,6 @@ row_difference_closure <- function(i,j,d){
 
   function(vec, average_vec = rep(0,length(vec))){
     new_vec <- vec - average_vec
-    max(abs(new_vec[idx1] - new_vec[idx2]))
+    new_vec[idx1] - new_vec[idx2]
   }
 }
