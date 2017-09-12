@@ -17,7 +17,8 @@ cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100,
 
   sigma_vec <- apply(dat, 2, stats::sd)
   psi <- translate(dat, sigma_vec = sigma_vec)
-  t0 <- max(abs(g(psi)))
+  theta <- g(psi)
+  t0 <- max(abs(theta))
 
   func <- function(i){
     idx <- sample(1:n, n, replace = T)
@@ -29,8 +30,9 @@ cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100,
   }
 
   i <- 1 #debugging purposes
-  t_boot <- as.numeric(foreach::"%dopar%"(foreach::foreach(i = 1:trials),
-                                          func(i)))
+  theta_boot <- foreach::"%dopar%"(foreach::foreach(i = 1:trials),
+                                          func(i))
+  t_boot <- sapply(theta_boot, function(x){max(abs(x - theta))})
 
   pval <- length(which(n^(1/2)*t_boot >= n^(1/2)*t0))/trials
 
