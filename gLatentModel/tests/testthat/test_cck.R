@@ -30,6 +30,22 @@ test_that("row_difference_closure gives the right value", {
   expect_true(res == 10)
 })
 
+test_that("row_difference_closure gives the right value on more complicated example", {
+  set.seed(10)
+  cov_mat <- matrix(rnorm(16^2), 16, 16)
+  cov_mat <- cov_mat %*% t(cov_mat)
+  cov_mat[-c(1,2),2] <- cov_mat[-c(1,2),1]
+  cov_mat[2,-c(1,2)] <- cov_mat[1,-c(1,2)]
+
+  stopifnot(sum(abs(cov_mat[-c(1,2),1] - cov_mat[-c(1,2),2])) < 1e-6)
+
+  vec <- cov_mat[lower.tri(cov_mat)]
+  g <- row_difference_closure(1,2,16)
+  res <- g(vec)
+
+  expect_true(res < 1e-6)
+})
+
 test_that("row_difference_closure gives a function that does the right calculation",{
   set.seed(10)
   n <- 100; d <- 4
