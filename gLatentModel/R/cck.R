@@ -12,7 +12,7 @@
 cck <- function(dat, g, translate = cor_vec, alpha = 0.05, trials = 100,
                 cores = 2){
   n <- nrow(dat)
-  dat <- scale(dat, scale = F)
+  #dat <- scale(dat, scale = F)
   doMC::registerDoMC(cores = cores)
 
   sigma_vec <- apply(dat, 2, stats::sd)
