@@ -1,6 +1,6 @@
 source("../main/simulation_header.R")
 
-trials <- 500; d <- 16; n <- 500
+trials <- 500; d <- 10; n <- 500
 res <- vector("list", trials)
 
 cov_mat <- matrix(.2, d, d)
@@ -11,7 +11,7 @@ for(i in 1:trials){
   set.seed(10*i)
   if(i %% floor(trials/10) == 0) cat('*')
 
-  dat <- MASS::mvrnorm(n, mu = rep(0,16), Sigma = cov_mat)
+  dat <- MASS::mvrnorm(n, mu = rep(0,d), Sigma = cov_mat)
 
   combn_mat <- combn(d, 2)
   g_list <- lapply(1:ncol(combn_mat), function(x){
