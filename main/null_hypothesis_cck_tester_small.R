@@ -10,7 +10,7 @@ for(i in 1:trials){
   set.seed(10*i)
   if(i %% floor(trials/10) == 0) cat('*')
 
-  dat <- MASS::mvrnorm(100, mu = rep(0,4), Sigma = cov_mat)
+  dat <- MASS::mvrnorm(1000, mu = rep(0,4), Sigma = cov_mat)
   g <- gLatentModel::row_difference_closure(1,4,4)
   vec[i] <- gLatentModel::cck(dat, g = g, trials = 200, cores = 20)$pval
 }
