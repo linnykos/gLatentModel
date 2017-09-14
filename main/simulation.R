@@ -1,8 +1,8 @@
 source("../main/simulation_header.R")
 
-trials <- 50
-d <- 20
-n_seq <- c(10, 20, 50, 200)
+trials <- 200
+d <- 40
+n_seq <- c(10, 40, 100, 250)
 strength_seq <- c(0, 0.3, 0.6, 0.9)
 param_mat <- as.matrix(expand.grid(n_seq, strength_seq))
 cores <- 20
@@ -32,7 +32,7 @@ rule_closure <- function(d, bootstrap_trials = 100){
     hier_res <- cutree(obj, 4)
     hier_res <- lapply(unique(hier_res), function(x){which(hier_res == x)})
 
-    list(cck_res = cck_res, mcord_res = mcord_res, hier_res = hier_res)
+    list(cck_res = cck_res, cck_res2 = cck_res2, mcord_res = mcord_res, hier_res = hier_res)
   }
 }
 
