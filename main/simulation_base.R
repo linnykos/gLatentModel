@@ -1,7 +1,7 @@
 simulationGenerator <- function(rule, paramMat, criterion, trials,
                                 cores = NA){
 
-  if(!is.na(cores)) registerDoMC(cores = cores)
+  if(!is.na(cores)) doMC::registerDoMC(cores = cores)
 
   res <- lapply(1:nrow(paramMat), function(x){
     cat(paste0("Row ", x, " started!\n"))
@@ -10,7 +10,7 @@ simulationGenerator <- function(rule, paramMat, criterion, trials,
     if(is.na(cores)){
       sapply(1:trials, fun, verbose = T)
     } else {
-      .adjustFormat(foreach(trial = 1:trials) %dopar% fun(trial))
+      .adjustFormat(foreach::"%dopar%"(foreach::foreach(trial = 1:trials), fun(trial)))
     }
   })
 

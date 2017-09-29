@@ -5,7 +5,7 @@ d <- 40
 n_seq <- ceiling(exp(seq(log(10), log(500), length.out = 15)))
 strength_seq <- c(0, 0.3, 0.6, 0.9)
 param_mat <- as.matrix(expand.grid(n_seq, strength_seq))
-cores <- 20
+cores <- 4
 
 rule_closure <- function(d, bootstrap_trials = 200){
   function(vec){
@@ -39,7 +39,7 @@ rule_closure <- function(d, bootstrap_trials = 200){
 rule <- rule_closure(d)
 criterion <- function(x, vec){x}
 
-res <- simulationGenerator(rule, param_mat, criterion, trials, cores = NA)
+res <- simulationGenerator(rule, param_mat, criterion, trials, cores = cores)
 
 save.image("../main/results.RData")
 
