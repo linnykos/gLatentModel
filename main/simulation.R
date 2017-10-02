@@ -39,7 +39,8 @@ rule_closure <- function(d, bootstrap_trials = 150){
 rule <- rule_closure(d)
 criterion <- function(x, vec){x}
 
-res <- simulationGenerator(rule, param_mat, criterion, trials, cores = NA)
+res <- simulationGenerator(rule, param_mat, criterion, trials, cores = NA,
+                           filename = "../main/results_tmp.RData")
 
 save.image("../main/results.RData")
 

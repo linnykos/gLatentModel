@@ -1,21 +1,24 @@
 simulationGenerator <- function(rule, paramMat, criterion, trials,
-                                cores = NA){
+                                cores = NA, filename = NA){
 
   if(!is.na(cores)) doMC::registerDoMC(cores = cores)
 
-  res <- lapply(1:nrow(paramMat), function(x){
+  res <- vector(list, nrow(paramMat))
+  names(res) <- sapply(1:nrow(paramMat), function(x){
+    paste0(paramMat[x,], collapse = "-")})
+
+  for(i in 1:nrow(paramMat)){
     cat(paste0("Row ", x, " started!\n"))
 
     fun <- function(y, verbose = F){if(verbose) print(y); set.seed(y); criterion(rule(paramMat[x,]), paramMat[x,])}
     if(is.na(cores)){
-      sapply(1:trials, fun, verbose = T)
+      res[[i]] <- sapply(1:trials, fun, verbose = T)
     } else {
-      .adjustFormat(foreach::"%dopar%"(foreach::foreach(trial = 1:trials), fun(trial)))
+      res[[i]] <- .adjustFormat(foreach::"%dopar%"(foreach::foreach(trial = 1:trials), fun(trial)))
     }
-  })
 
-  names(res) <- sapply(1:nrow(paramMat), function(x){
-    paste0(paramMat[x,], collapse = "-")})
+    if(!is.na(filename)) save(res, file = filename)
+  }
 
   res
 }
